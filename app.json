@@ -1,0 +1,42 @@
+{
+    "name": "ImageBox",
+    "id": "com.github.rexlevin.imagebox",
+    "description": "A powerful image processing toolkit for Canbox - compress, watermark, convert, resize, and beautify your images",
+    "description_zh": "Canbox 图片工具箱 - 压缩、水印、转换、尺寸调整、截图美化",
+    "author": "rexlevin",
+    "repo": "https://github.com/rexlevin/cb-imagebox",
+    "homepage": "https://rexlevin.github.io/canbox-pages/",
+    "main": "index.html",
+    "logo": "logo.png",
+    "version": "0.1.0",
+    "window": {
+        "minWidth": 900,
+        "minHeight": 600,
+        "width": 1200,
+        "height": 800,
+        "icon": "logo.png",
+        "resizable": true,
+        "webPreferences": {
+            "preload": "preload.js",
+            "contextIsolation": true,
+            "nodeIntegration": false
+        }
+    },
+    "platform": [
+        "windows",
+        "darwin",
+        "linux"
+    ],
+    "categories": [
+        "graphics",
+        "utility"
+    ],
+    "tags": [
+        "image",
+        "image-processing",
+        "compress",
+        "watermark",
+        "convert",
+        "screenshot"
+    ]
+}

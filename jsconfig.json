@@ -1,0 +1,52 @@
+{
+    "compilerOptions": {
+        "checkJs": false,
+        "strict": false,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "maxNodeModuleJsDepth": 0,
+        "target": "es6",
+        "module": "commonjs",
+        "forceConsistentCasingInFileNames": true,
+        "typeRoots": [
+            "./types",
+            "./node_modules/@types"
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "src/*"
+            ],
+            "@components/*": [
+                "src/components/*"
+            ],
+            "@composables/*": [
+                "src/composables/*"
+            ],
+            "@modules/*": [
+                "src/modules/*"
+            ],
+            "@stores/*": [
+                "src/stores/*"
+            ],
+            "@utils/*": [
+                "src/utils/*"
+            ],
+            "@assets/*": [
+                "src/assets/*"
+            ]
+        }
+    },
+    "include": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.vue"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "build"
+    ]
+}

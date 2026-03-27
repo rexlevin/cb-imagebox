@@ -19,7 +19,7 @@ ImageBox is a Canbox-based application that provides a comprehensive set of imag
 
 ## Tech Stack
 
-- **Framework**: Vue 3 + TypeScript
+- **Framework**: Vue 3 + JavaScript
 - **UI Library**: TDesign Vue Next
 - **State Management**: Pinia
 - **Image Processing**: Jimp + heic-decode

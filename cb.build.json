@@ -1,0 +1,11 @@
+{
+    "files": [
+        "dist/**/*",
+        "preload.js",
+        "logo.png",
+        "app.json",
+        "README.md",
+        "HISTORY.md"
+    ],
+    "outputDir": "./build"
+}

@@ -19,7 +19,7 @@ ImageBox 是一款基于 Canbox 平台的图片处理应用。采用 Vue 3 和 T
 
 ## 技术栈
 
-- **框架**: Vue 3 + TypeScript
+- **框架**: Vue 3 + JavaScript
 - **UI 组件库**: TDesign Vue Next
 - **状态管理**: Pinia
 - **图片处理**: Jimp + heic-decode
