@@ -1,0 +1,813 @@
+/* 颜色变量 */
+:root {
+    --ib-primary: #6366f1;
+    --ib-primary-light: #818cf8;
+    --ib-primary-dark: #4f46e5;
+
+    --ib-bg-page: #1a1a2e;
+    --ib-bg-card: #252542;
+    --ib-bg-input: #2d2d50;
+    --ib-bg-hover: #3a3a5a;
+
+    --ib-text-primary: #ffffff;
+    --ib-text-secondary: #c0c0d0;
+    --ib-text-muted: #9090b0;
+
+    --ib-border: #404060;
+    --ib-border-light: #505070;
+
+    --ib-success: #10b981;
+    --ib-warning: #f59e0b;
+    --ib-error: #ef4444;
+    --ib-info: #3b82f6;
+
+    --ib-space-xs: 4px;
+    --ib-space-sm: 8px;
+    --ib-space-md: 16px;
+    --ib-space-lg: 24px;
+    --ib-space-xl: 32px;
+
+    --ib-radius-sm: 4px;
+    --ib-radius-md: 8px;
+    --ib-radius-lg: 12px;
+    --ib-radius-xl: 16px;
+
+    --ib-sidebar-width: 200px;
+    --ib-sidebar-collapsed: 64px;
+}
+
+/* 浅色主题变量 */
+[data-theme="light"] {
+    --ib-primary: #6366f1;
+    --ib-primary-light: #818cf8;
+    --ib-primary-dark: #4f46e5;
+
+    --ib-bg-page: #f5f7fa;
+    --ib-bg-card: #ffffff;
+    --ib-bg-input: #f0f2f5;
+    --ib-bg-hover: #e8ebf0;
+
+    --ib-text-primary: #1a1a2e;
+    --ib-text-secondary: #5a5a7a;
+    --ib-text-muted: #8a8aaa;
+
+    --ib-border: #d0d0e0;
+    --ib-border-light: #e0e0f0;
+
+    --ib-success: #10b981;
+    --ib-warning: #f59e0b;
+    --ib-error: #ef4444;
+    --ib-info: #3b82f6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--ib-bg-page);
+    color: var(--ib-text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* 确保所有文字使用正确的颜色 */
+.t-aside * {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-menu * {
+    color: var(--ib-text-secondary) !important;
+}
+
+.t-menu__item:hover * {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-menu__item.t-is-active * {
+    color: var(--ib-primary) !important;
+}
+
+.t-card * {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-form * {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-input-number * {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-empty * {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-upload * {
+    color: var(--ib-text-primary) !important;
+}
+
+/* 浅色主题下的按钮样式调整 */
+[data-theme="light"] .t-button--theme-default {
+    background-color: #ffffff !important;
+    color: #1a1a2e !important;
+}
+
+[data-theme="light"] .t-button--theme-default:hover {
+    background-color: #f0f2f5 !important;
+    border-color: #6366f1;
+}
+
+[data-theme="light"] .t-button--variant-outline {
+    background-color: transparent !important;
+    color: #1a1a2e !important;
+}
+
+[data-theme="light"] .t-button--variant-text {
+    background-color: transparent !important;
+    color: #5a5a7a !important;
+}
+
+[data-theme="light"] .t-button--variant-text:hover {
+    color: #1a1a2e !important;
+    background-color: #f0f2f5 !important;
+}
+
+/* 深色主题下的按钮图标颜色 */
+[data-theme="dark"] .t-button--variant-text .t-icon {
+    color: var(--ib-text-primary) !important;
+}
+
+[data-theme="dark"] .t-button--variant-text:hover .t-icon {
+    color: var(--ib-primary) !important;
+}
+
+/* 头部按钮的特殊样式 */
+.header-actions .t-button--variant-text {
+    background-color: transparent !important;
+}
+
+.header-actions .t-button--variant-text .t-icon {
+    color: var(--ib-text-primary) !important;
+    font-size: 20px;
+}
+
+.header-actions .t-button--variant-text:hover {
+    background-color: var(--ib-bg-hover) !important;
+}
+
+.header-actions .t-button--variant-text:hover .t-icon {
+    color: var(--ib-primary) !important;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--ib-bg-page);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--ib-border-light);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--ib-text-muted);
+}
+
+/* 浅色主题下的滚动条样式 */
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: #d0d0e0;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+    background: #b0b0d0;
+}
+
+/* TDesign 深色主题覆盖 */
+.t-layout {
+    background-color: var(--ib-bg-page);
+    color: var(--ib-text-primary);
+}
+
+/* 侧边栏 */
+.t-aside {
+    background-color: var(--ib-bg-card) !important;
+    border-right: 1px solid var(--ib-border);
+    color: var(--ib-text-primary) !important;
+}
+
+/* 头部 */
+.t-header {
+    background-color: var(--ib-bg-card) !important;
+    border-bottom: 1px solid var(--ib-border);
+}
+
+/* 内容区域 */
+.t-content {
+    background-color: var(--ib-bg-page) !important;
+}
+
+/* 卡片 */
+.t-card {
+    background-color: var(--ib-bg-card) !important;
+    border-color: var(--ib-border) !important;
+    color: var(--ib-text-primary) !important;
+}
+
+.t-card__body {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-card--shadow {
+    box-shadow: none !important;
+}
+
+.t-card:hover {
+    border-color: var(--ib-border-light) !important;
+}
+
+.t-card__title-wrapper {
+    color: var(--ib-text-primary) !important;
+}
+
+/* 菜单 */
+.t-menu {
+    background-color: transparent;
+    border: none;
+}
+
+.t-menu__item {
+    color: var(--ib-text-secondary) !important;
+    border-radius: 8px;
+    margin: 4px 8px;
+    padding: 10px 16px;
+}
+
+.t-menu__item:hover {
+    color: var(--ib-text-primary) !important;
+    background-color: var(--ib-bg-hover) !important;
+}
+
+.t-menu__item.t-is-active {
+    color: var(--ib-primary) !important;
+    background-color: var(--ib-bg-hover) !important;
+}
+
+/* 输入框 */
+.t-input {
+    background-color: var(--ib-bg-input) !important;
+    border-color: var(--ib-border) !important;
+    color: var(--ib-text-primary) !important;
+}
+
+.t-input__inner {
+    background-color: transparent !important;
+    color: var(--ib-text-primary) !important;
+}
+
+.t-input--focused {
+    border-color: var(--ib-primary) !important;
+}
+
+.t-input__placeholder {
+    color: var(--ib-text-muted);
+}
+
+/* 输入数字框 */
+.t-input-number {
+    background-color: var(--ib-bg-input) !important;
+    border-color: var(--ib-border) !important;
+    color: var(--ib-text-primary) !important;
+}
+
+.t-input-number__input {
+    background-color: transparent !important;
+    color: var(--ib-text-primary) !important;
+}
+
+.t-input-number__increase,
+.t-input-number__decrease {
+    background-color: var(--ib-bg-hover) !important;
+    color: var(--ib-text-primary) !important;
+}
+
+.t-input-number__increase:hover,
+.t-input-number__decrease:hover {
+    background-color: var(--ib-bg-hover) !important;
+    color: var(--ib-primary) !important;
+}
+
+/* 按钮样式 */
+.t-button {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-button--variant-outline {
+    border-color: var(--ib-border);
+    background-color: transparent !important;
+}
+
+.t-button--variant-outline:hover {
+    background-color: var(--ib-bg-hover) !important;
+}
+
+.t-button--theme-primary {
+    color: #ffffff !important;
+}
+
+.t-button--theme-primary:hover {
+    background-color: var(--ib-primary-dark) !important;
+}
+
+.t-button--theme-default {
+    color: var(--ib-text-primary) !important;
+    background-color: var(--ib-bg-input) !important;
+    border-color: var(--ib-border);
+}
+
+.t-button--theme-default:hover {
+    background-color: var(--ib-bg-hover) !important;
+    border-color: var(--ib-primary);
+}
+
+.t-button--theme-default:disabled {
+    color: var(--ib-text-muted) !important;
+    opacity: 0.6;
+}
+
+.t-button--variant-text {
+    color: var(--ib-text-secondary) !important;
+    background-color: transparent !important;
+}
+
+.t-button--variant-text:hover {
+    color: var(--ib-text-primary) !important;
+    background-color: var(--ib-bg-hover) !important;
+}
+
+/* 标签样式 */
+.t-tag {
+    background-color: var(--ib-bg-hover) !important;
+    color: var(--ib-text-primary) !important;
+    border-color: var(--ib-border-light) !important;
+}
+
+.t-tag--theme-default {
+    background-color: var(--ib-bg-hover) !important;
+    color: var(--ib-text-primary) !important;
+    border-color: var(--ib-border-light) !important;
+}
+
+.t-tag--variant-light {
+    background-color: var(--ib-bg-hover) !important;
+    color: var(--ib-text-primary) !important;
+    border: none !important;
+}
+
+.t-tag--theme-success {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+    color: #10b981 !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+.t-tag--theme-warning {
+    background-color: rgba(245, 158, 11, 0.2) !important;
+    color: #f59e0b !important;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+.t-tag--theme-error {
+    background-color: rgba(239, 68, 68, 0.2) !important;
+    color: #ef4444 !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+/* 表单相关 */
+.t-form-item__label {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-form-item {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-checkbox {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-checkbox-group {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-radio {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-radio-group {
+    color: var(--ib-text-primary) !important;
+}
+
+/* 复选框和单选框的选项 */
+.t-checkbox__label {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-radio__label {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-radio__label-inner {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-checkbox__label-inner {
+    color: var(--ib-text-primary) !important;
+}
+
+/* 滑块样式 */
+.t-slider__text {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-slider__mark {
+    color: var(--ib-text-secondary) !important;
+}
+
+.t-slider__mark-text {
+    color: var(--ib-text-muted) !important;
+}
+
+.t-slider__track {
+    background-color: var(--ib-primary);
+}
+
+.t-slider__bar {
+    background-color: var(--ib-primary);
+}
+
+.t-slider__button {
+    border-color: var(--ib-primary);
+}
+
+.t-slider__button:hover {
+    border-color: var(--ib-primary-light);
+}
+
+.t-slider__button-wrapper {
+    background-color: #ffffff;
+}
+
+/* 卡片标题 */
+.t-card__header {
+    color: var(--ib-text-primary) !important;
+    border-bottom-color: var(--ib-border) !important;
+}
+
+.t-card__title {
+    color: var(--ib-text-primary) !important;
+}
+
+/* 图标颜色 */
+.t-icon {
+    color: var(--ib-text-secondary);
+}
+
+/* 主题切换图标的样式必须在后面，优先级更高 */
+.theme-toggle-btn .theme-icon {
+    color: #fbbf24 !important;
+    font-size: 20px;
+}
+
+[data-theme="light"] .theme-toggle-btn .theme-icon {
+    color: #5a5a7a !important;
+}
+
+[data-theme="dark"] .theme-toggle-btn .theme-icon {
+    color: #fbbf24 !important;
+}
+
+.t-menu__item .t-icon {
+    color: var(--ib-text-secondary);
+}
+
+.t-menu__item:hover .t-icon {
+    color: var(--ib-text-primary);
+}
+
+.t-menu__item.t-is-active .t-icon {
+    color: var(--ib-primary);
+}
+
+/* 分割线 */
+.t-divider {
+    border-color: var(--ib-border);
+}
+
+/* Upload 上传组件 */
+.t-upload {
+    color: var(--ib-text-primary);
+}
+
+.t-upload__trigger {
+    background-color: var(--ib-bg-input);
+    border-color: var(--ib-border);
+    color: var(--ib-text-secondary);
+}
+
+.t-upload__trigger:hover {
+    border-color: var(--ib-primary);
+    color: var(--ib-primary);
+}
+
+/* Select 选择器 */
+.t-select {
+    background-color: var(--ib-bg-input) !important;
+    border-color: var(--ib-border) !important;
+    color: var(--ib-text-primary) !important;
+}
+
+.t-select__input {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-select__placeholder {
+    color: var(--ib-text-muted);
+}
+
+/* 开关 Switch */
+.t-switch {
+    background-color: var(--ib-bg-hover);
+}
+
+.t-switch--checked {
+    background-color: var(--ib-primary);
+}
+
+.t-switch__label {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-switch__handle {
+    background-color: #ffffff;
+}
+
+/* Progress 进度条 */
+.t-progress__bar {
+    background-color: var(--ib-primary);
+}
+
+/* Loading 加载 */
+.t-loading__text {
+    color: var(--ib-text-secondary);
+}
+
+.t-loading {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-loading__indicator {
+    color: var(--ib-primary) !important;
+}
+
+/* Message 消息 */
+.t-message {
+    background-color: var(--ib-bg-card);
+    color: var(--ib-text-primary);
+    border-color: var(--ib-border);
+}
+
+/* Notification 通知 */
+.t-notification {
+    background-color: var(--ib-bg-card);
+    color: var(--ib-text-primary);
+}
+
+/* Modal 对话框 */
+.t-modal {
+    background-color: var(--ib-bg-card);
+    color: var(--ib-text-primary);
+}
+
+.t-modal__header {
+    color: var(--ib-text-primary);
+}
+
+.t-modal__body {
+    color: var(--ib-text-primary);
+}
+
+/* Drawer 抽屉 */
+.t-drawer {
+    background-color: var(--ib-bg-card);
+    color: var(--ib-text-primary);
+}
+
+/* Popover 弹出框 */
+.t-popover {
+    background-color: var(--ib-bg-card);
+    color: var(--ib-text-primary);
+}
+
+/* Tooltip 提示 */
+.t-tooltip {
+    background-color: var(--ib-bg-card);
+    color: var(--ib-text-primary);
+}
+
+/* Empty 空状态 */
+.t-empty {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-empty__description {
+    color: var(--ib-text-primary) !important;
+}
+
+.t-empty__icon {
+    color: var(--ib-text-muted) !important;
+}
+
+.t-empty__image {
+    filter: brightness(0.8);
+}
+
+/* Dropdown 下拉框 */
+.t-dropdown {
+    background-color: var(--ib-bg-card);
+    border-color: var(--ib-border);
+    color: var(--ib-text-primary);
+}
+
+.t-dropdown__item {
+    color: var(--ib-text-primary);
+}
+
+.t-dropdown__item:hover {
+    background-color: var(--ib-bg-hover);
+    color: var(--ib-text-primary);
+}
+
+.t-dropdown__item.t-is-active {
+    background-color: var(--ib-bg-hover);
+    color: var(--ib-primary);
+}
+
+/* 穿刺层 Popper */
+.t-popup {
+    background-color: var(--ib-bg-card);
+    border-color: var(--ib-border);
+    color: var(--ib-text-primary);
+}
+
+/* Tree 树组件 */
+.t-tree {
+    color: var(--ib-text-primary);
+}
+
+.t-tree__label {
+    color: var(--ib-text-primary);
+}
+
+.t-tree__label:hover {
+    background-color: var(--ib-bg-hover);
+}
+
+/* Table 表格 */
+.t-table {
+    background-color: var(--ib-bg-card);
+    color: var(--ib-text-primary);
+}
+
+.t-table thead {
+    background-color: var(--ib-bg-input);
+    color: var(--ib-text-secondary);
+}
+
+.t-table tbody tr:hover {
+    background-color: var(--ib-bg-hover);
+}
+
+.t-table td {
+    border-color: var(--ib-border);
+}
+
+.t-table th {
+    border-color: var(--ib-border);
+    color: var(--ib-text-secondary);
+}
+
+/* 分页 Pagination */
+.t-pagination {
+    color: var(--ib-text-primary);
+}
+
+.t-pagination__btn {
+    background-color: var(--ib-bg-input);
+    border-color: var(--ib-border);
+    color: var(--ib-text-primary);
+}
+
+.t-pagination__btn:hover {
+    border-color: var(--ib-primary);
+    color: var(--ib-primary);
+}
+
+.t-pagination__btn.t-is-active {
+    background-color: var(--ib-primary);
+    color: #ffffff;
+    border-color: var(--ib-primary);
+}
+
+/* Tabs 标签页 */
+.t-tabs__nav-item {
+    color: var(--ib-text-secondary);
+}
+
+.t-tabs__nav-item:hover {
+    color: var(--ib-text-primary);
+}
+
+.t-tabs__nav-item.t-is-active {
+    color: var(--ib-primary);
+}
+
+.t-tabs__nav-item-wrapper {
+    border-bottom-color: var(--ib-border);
+}
+
+/* 颜色选择器 ColorPicker */
+.t-color-picker {
+    background-color: var(--ib-bg-input);
+    border-color: var(--ib-border);
+}
+
+/* 日期选择器 DatePicker */
+.t-date-picker {
+    background-color: var(--ib-bg-input) !important;
+    border-color: var(--ib-border) !important;
+    color: var(--ib-text-primary) !important;
+}
+
+.t-input__inner {
+    background-color: transparent !important;
+    color: var(--ib-text-primary) !important;
+}
+
+/* 时间选择器 TimePicker */
+.t-time-picker {
+    background-color: var(--ib-bg-input) !important;
+    border-color: var(--ib-border) !important;
+    color: var(--ib-text-primary) !important;
+}
+
+/* Transfer 穿梭框 */
+.t-transfer {
+    color: var(--ib-text-primary);
+}
+
+/* Steps 步骤条 */
+.t-steps {
+    color: var(--ib-text-primary);
+}
+
+.t-steps-item__title {
+    color: var(--ib-text-primary);
+}
+
+.t-steps-item__description {
+    color: var(--ib-text-secondary);
+}
+
+/* Badge 徽标 */
+.t-badge {
+    color: var(--ib-text-primary);
+}
+
+/* Alert 提示 */
+.t-alert {
+    background-color: var(--ib-bg-hover);
+    border-color: var(--ib-border);
+    color: var(--ib-text-primary);
+}
+
+.t-alert__title {
+    color: var(--ib-text-primary);
+}
+
+.t-alert__message {
+    color: var(--ib-text-secondary);
+}
