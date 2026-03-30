@@ -56,21 +56,27 @@
                     {{ currentTitle }}
                 </div>
                 <div class="header-actions">
-                    <t-button class="theme-toggle-btn" theme="default" variant="text" @click="toggleTheme">
-                        <template #icon>
-                            <t-icon class="theme-icon" :name="settingsStore.theme === 'dark' ? 'sun' : 'moon'" />
-                        </template>
-                    </t-button>
-                    <t-button theme="default" variant="text">
-                        <template #icon>
-                            <t-icon name="help-circle" />
-                        </template>
-                    </t-button>
-                    <t-button theme="default" variant="text">
-                        <template #icon>
-                            <t-icon name="setting" />
-                        </template>
-                    </t-button>
+                    <t-tooltip content="切换主题" placement="bottom">
+                        <t-button theme="default" variant="text" @click="toggleTheme">
+                            <template #icon>
+                                <t-icon name="swap" />
+                            </template>
+                        </t-button>
+                    </t-tooltip>
+                    <t-tooltip content="帮助" placement="bottom">
+                        <t-button theme="default" variant="text" @click="showHelp">
+                            <template #icon>
+                                <t-icon name="help-circle" />
+                            </template>
+                        </t-button>
+                    </t-tooltip>
+                    <t-tooltip content="设置" placement="bottom">
+                        <t-button theme="default" variant="text" @click="showSettings">
+                            <template #icon>
+                                <t-icon name="setting" />
+                            </template>
+                        </t-button>
+                    </t-tooltip>
                 </div>
             </t-header>
             <t-content class="content">
@@ -88,6 +94,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
+import { MessagePlugin } from 'tdesign-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -104,6 +111,15 @@ const currentTitle = computed(() => {
 
 const toggleTheme = () => {
     settingsStore.toggleTheme()
+    MessagePlugin.success(`已切换到${settingsStore.theme === 'dark' ? '浅色' : '深色'}主题`)
+}
+
+const showHelp = () => {
+    MessagePlugin.info('帮助文档正在开发中...')
+}
+
+const showSettings = () => {
+    MessagePlugin.info('设置面板正在开发中...')
 }
 </script>
 
@@ -178,16 +194,6 @@ const toggleTheme = () => {
     flex: 1;
     padding: 24px;
     overflow-y: auto;
-}
-
-/* 主题切换按钮图标样式 */
-.theme-toggle-btn :deep(.theme-icon) {
-    color: #fbbf24 !important;
-    font-size: 20px;
-}
-
-.theme-toggle-btn:hover :deep(.theme-icon) {
-    color: #fcd34d !important;
 }
 
 /* 页面切换动画 */

@@ -42,22 +42,3 @@ onMounted(() => {
 }
 </style>
 
-<style>
-/* 浅色主题下的主题切换图标颜色 */
-[data-theme="light"] .theme-toggle-btn .theme-icon {
-    color: #5a5a7a !important;
-}
-
-[data-theme="light"] .theme-toggle-btn:hover .theme-icon {
-    color: #1a1a2e !important;
-}
-
-/* 深色主题下的主题切换图标颜色 */
-[data-theme="dark"] .theme-toggle-btn .theme-icon {
-    color: #fbbf24 !important;
-}
-
-[data-theme="dark"] .theme-toggle-btn:hover .theme-icon {
-    color: #fcd34d !important;
-}
-</style>

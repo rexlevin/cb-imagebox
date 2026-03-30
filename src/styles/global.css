@@ -486,20 +486,6 @@ body {
     color: var(--ib-text-secondary);
 }
 
-/* 主题切换图标的样式必须在后面，优先级更高 */
-.theme-toggle-btn .theme-icon {
-    color: #fbbf24 !important;
-    font-size: 20px;
-}
-
-[data-theme="light"] .theme-toggle-btn .theme-icon {
-    color: #5a5a7a !important;
-}
-
-[data-theme="dark"] .theme-toggle-btn .theme-icon {
-    color: #fbbf24 !important;
-}
-
 .t-menu__item .t-icon {
     color: var(--ib-text-secondary);
 }
