@@ -2,51 +2,52 @@
   <div class="resize-view">
     <ImageUploader multiple @upload="handleUpload" />
 
-    <t-card class="settings-card" title="调整设置">
-      <t-form :data="settings" label-align="top">
-        <t-form-item label="调整模式">
-          <t-radio-group v-model="settings.mode">
-            <t-radio value="dimensions">指定尺寸</t-radio>
-            <t-radio value="percent">百分比</t-radio>
-          </t-radio-group>
-        </t-form-item>
+    <n-card class="settings-card" title="调整设置">
+      <n-form :model="settings" label-placement="top">
+        <n-form-item label="调整模式">
+          <n-radio-group v-model:value="settings.mode">
+            <n-radio value="dimensions">指定尺寸</n-radio>
+            <n-radio value="percent">百分比</n-radio>
+          </n-radio-group>
+        </n-form-item>
 
-        <t-form-item v-if="settings.mode === 'dimensions'" label="尺寸">
+        <n-form-item v-if="settings.mode === 'dimensions'" label="尺寸">
           <div class="size-inputs">
-            <t-input-number v-model="settings.width" placeholder="宽度" />
+            <n-input-number v-model:value="settings.width" placeholder="宽度" :show-button="false" />
             <span class="size-divider">×</span>
-            <t-input-number v-model="settings.height" placeholder="高度" />
+            <n-input-number v-model:value="settings.height" placeholder="高度" :show-button="false" />
           </div>
-          <t-checkbox v-model="settings.keepRatio" style="margin-top: 8px">
+          <n-checkbox v-model:checked="settings.keepRatio" style="margin-top: 8px">
             保持宽高比
-          </t-checkbox>
-        </t-form-item>
+          </n-checkbox>
+        </n-form-item>
 
-        <t-form-item v-if="settings.mode === 'percent'" label="缩放比例">
-          <t-slider v-model="settings.percent" :min="10" :max="200" :marks="{ 50: '50%', 100: '100%', 150: '150%' }" />
+        <n-form-item v-if="settings.mode === 'percent'" label="缩放比例">
+          <n-slider v-model:value="settings.percent" :min="10" :max="200" :step="1" />
           <div class="percent-value">{{ settings.percent }}%</div>
-        </t-form-item>
+        </n-form-item>
 
-        <t-form-item label="预设尺寸">
+        <n-form-item label="预设尺寸">
           <div class="preset-grid">
-            <t-tag
+            <n-tag
               v-for="preset in presets"
               :key="preset.label"
+              :type="isPresetActive(preset) ? 'primary' : 'default'"
               checkable
               :checked="isPresetActive(preset)"
               @click="applyPreset(preset)"
             >
               {{ preset.label }}
-            </t-tag>
+            </n-tag>
           </div>
-        </t-form-item>
-      </t-form>
-    </t-card>
+        </n-form-item>
+      </n-form>
+    </n-card>
 
     <FileList :files="files" @remove="handleRemove" @clear="handleClear" />
-    <t-button theme="primary" size="large" :loading="processing" block @click="handleResize">
+    <n-button type="primary" size="large" :loading="processing" block @click="handleResize">
       开始调整
-    </t-button>
+    </n-button>
   </div>
 </template>
 
@@ -119,36 +120,36 @@ const handleResize = async () => {
 .resize-view {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    max-width: 900px;
+    gap: 16px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
 .settings-card {
-    background-color: var(--ib-bg-card);
+    background-color: var(--n-card-color);
 }
 
 .size-inputs {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .size-divider {
-    color: var(--ib-text-secondary);
+    color: var(--n-text-color-2);
     font-weight: 500;
 }
 
 .percent-value {
     text-align: right;
-    font-size: 12px;
-    color: var(--ib-text-secondary);
-    margin-top: 8px;
+    font-size: 11px;
+    color: var(--n-text-color-2);
+    margin-top: 6px;
 }
 
 .preset-grid {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 </style>

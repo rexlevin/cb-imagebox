@@ -3,20 +3,20 @@
         @dragleave.prevent="handleDragLeave" @drop.prevent="handleDrop">
         <div class="uploader-content">
             <div class="uploader-icon">
-                <t-icon name="upload" size="48px" />
+                <n-icon :component="UploadIcon" :size="48" />
             </div>
             <div class="uploader-text">拖拽图片到这里</div>
             <div class="uploader-hint">或</div>
             <div class="uploader-actions">
-                <t-button theme="primary" @click="handleSelectFile">
+                <n-button type="primary" @click="handleSelectFile">
                     选择文件
-                </t-button>
-                <t-button theme="default" variant="outline" @click="handlePaste">
+                </n-button>
+                <n-button secondary @click="handlePaste">
                     <template #icon>
-                        <t-icon name="clipboard" />
+                        <n-icon :component="ClipboardIcon" />
                     </template>
                     粘贴剪贴板
-                </t-button>
+                </n-button>
             </div>
             <div class="uploader-formats">
                 支持 JPG, PNG, WebP, GIF, HEIC
@@ -29,7 +29,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import { MessagePlugin } from 'tdesign-vue-next'
+import { useMessage } from 'naive-ui'
+import { Upload as UploadIcon, Paste as ClipboardIcon } from '@vicons/carbon'
 
 const props = defineProps({
     multiple: {
@@ -48,6 +49,7 @@ const fileInputRef = ref(null)
 const isDragging = ref(false)
 
 const acceptTypes = 'image/jpeg,image/png,image/webp,image/gif,image/heic'
+const message = useMessage()
 
 const handleDragOver = () => {
     isDragging.value = true
@@ -75,18 +77,18 @@ const handleFileChange = (e) => {
 
 const handlePaste = () => {
     navigator.clipboard.readText().catch(() => {
-        MessagePlugin.warning('剪贴板中没有图片')
+        message.warning('剪贴板中没有图片')
     })
 }
 
 const validateFiles = (files) => {
     const validFiles = files.filter(file => {
         if (!file.type.startsWith('image/')) {
-            MessagePlugin.warning(`不支持的文件格式: ${file.name}`)
+            message.warning(`不支持的文件格式: ${file.name}`)
             return false
         }
         if (file.size > props.maxSize * 1024 * 1024) {
-            MessagePlugin.warning(`文件大小超过限制 (${props.maxSize}MB): ${file.name}`)
+            message.warning(`文件大小超过限制 (${props.maxSize}MB): ${file.name}`)
             return false
         }
         return true
@@ -100,51 +102,51 @@ const validateFiles = (files) => {
 
 <style scoped>
 .image-uploader {
-    border: 2px dashed var(--ib-border);
-    border-radius: 12px;
-    padding: 64px 48px;
+    border: 2px dashed var(--n-border-color);
+    border-radius: 8px;
+    padding: 48px 32px;
     text-align: center;
-    transition: all 0.3s;
-    background-color: var(--ib-bg-card);
+    transition: none;
+    background-color: var(--n-card-color);
 }
 
 .image-uploader.is-dragging {
-    border-color: var(--ib-primary);
-    background-color: var(--ib-bg-hover);
+    border-color: var(--n-primary-color);
+    background-color: var(--n-color-target);
 }
 
 .uploader-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
 }
 
 .uploader-icon {
-    color: var(--ib-primary);
+    color: var(--n-primary-color);
     opacity: 0.8;
 }
 
 .uploader-text {
-    font-size: 18px;
-    color: var(--ib-text-primary);
+    font-size: 16px;
+    color: var(--n-text-color);
     font-weight: 500;
 }
 
 .uploader-hint {
-    color: var(--ib-text-secondary);
-    font-size: 14px;
+    color: var(--n-text-color-2);
+    font-size: 13px;
 }
 
 .uploader-actions {
     display: flex;
-    gap: 12px;
-    margin-top: 8px;
+    gap: 10px;
+    margin-top: 6px;
 }
 
 .uploader-formats {
-    color: var(--ib-text-muted);
-    font-size: 13px;
-    margin-top: 8px;
+    color: var(--n-text-color-3);
+    font-size: 12px;
+    margin-top: 6px;
 }
 </style>

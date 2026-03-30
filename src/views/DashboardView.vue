@@ -6,22 +6,22 @@
         </div>
 
         <div class="features-grid">
-            <t-card v-for="feature in features" :key="feature.id" class="feature-card" hover-shadow>
+            <n-card v-for="feature in features" :key="feature.id" class="feature-card" hoverable>
                 <div class="feature-top">
                     <div class="feature-icon">{{ feature.icon }}</div>
                     <h3 class="feature-title">{{ feature.title }}</h3>
                 </div>
                 <p class="feature-desc">{{ feature.desc }}</p>
                 <div class="feature-tags">
-                    <t-tag v-for="tag in feature.tags" :key="tag" size="small" theme="default" variant="light">
+                    <n-tag v-for="tag in feature.tags" :key="tag" size="small" type="default">
                         {{ tag }}
-                    </t-tag>
+                    </n-tag>
                 </div>
-                <t-button class="feature-btn" theme="primary" variant="outline" block
+                <n-button class="feature-btn" type="primary" ghost block
                     @click="handleStart(feature.path)">
                     开始使用
-                </t-button>
-            </t-card>
+                </n-button>
+            </n-card>
         </div>
     </div>
 </template>
@@ -165,10 +165,9 @@ const handleStart = (path) => {
     margin-bottom: 16px;
 }
 
-.feature-tags .t-tag {
+.feature-tags .n-tag {
     background-color: var(--ib-bg-hover) !important;
     color: var(--ib-text-primary) !important;
-    border: none !important;
 }
 
 .feature-btn {

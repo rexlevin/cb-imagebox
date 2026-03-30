@@ -8,7 +8,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const deviceFrame = ref('iphone-15-pro')
   const keepExif = ref(true)
   const language = ref('zh-CN')
-  const theme = ref('dark')
+  const theme = ref('light')
 
   function updateSettings(settings) {
     Object.assign({

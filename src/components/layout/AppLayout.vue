@@ -1,104 +1,82 @@
 <template>
-    <t-layout class="app-layout">
-        <t-aside class="sidebar">
+    <n-layout class="app-layout" has-sider>
+        <n-layout-sider class="sidebar" :width="200" :collapsed-width="0" bordered>
             <div class="sidebar-header">
                 <span class="logo-icon">🖼️</span>
                 <span class="logo-text">ImageBox</span>
             </div>
-            <t-menu v-model:value="currentRoute" class="sidebar-menu">
-                <t-menu-item value="/">
-                    <template #icon>
-                        <t-icon name="home" />
-                    </template>
-                    首页
-                </t-menu-item>
-                <t-menu-item value="/compress">
-                    <template #icon>
-                        <t-icon name="image" />
-                    </template>
-                    图片压缩
-                </t-menu-item>
-                <t-menu-item value="/watermark">
-                    <template #icon>
-                        <t-icon name="add-rectangle" />
-                    </template>
-                    添加水印
-                </t-menu-item>
-                <t-menu-item value="/convert">
-                    <template #icon>
-                        <t-icon name="swap" />
-                    </template>
-                    格式转换
-                </t-menu-item>
-                <t-menu-item value="/resize">
-                    <template #icon>
-                        <t-icon name="zoom-in" />
-                    </template>
-                    尺寸调整
-                </t-menu-item>
-                <t-menu-item value="/screenshot">
-                    <template #icon>
-                        <t-icon name="mobile" />
-                    </template>
-                    截图美化
-                </t-menu-item>
-                <t-menu-item value="/workflow">
-                    <template #icon>
-                        <t-icon name="flow-arr" />
-                    </template>
-                    批量工作流
-                </t-menu-item>
-            </t-menu>
-        </t-aside>
-        <t-layout class="main-layout">
-            <t-header class="header">
+            <n-menu v-model:value="currentRoute" class="sidebar-menu" :options="menuOptions" :collapsed="false" :collapsed-width="0" />
+        </n-layout-sider>
+        <n-layout class="main-layout">
+            <n-layout-header class="header" bordered>
                 <div class="header-title">
                     {{ currentTitle }}
                 </div>
                 <div class="header-actions">
-                    <t-tooltip content="切换主题" placement="bottom">
-                        <t-button theme="default" variant="text" @click="toggleTheme">
-                            <template #icon>
-                                <t-icon name="swap" />
-                            </template>
-                        </t-button>
-                    </t-tooltip>
-                    <t-tooltip content="帮助" placement="bottom">
-                        <t-button theme="default" variant="text" @click="showHelp">
-                            <template #icon>
-                                <t-icon name="help-circle" />
-                            </template>
-                        </t-button>
-                    </t-tooltip>
-                    <t-tooltip content="设置" placement="bottom">
-                        <t-button theme="default" variant="text" @click="showSettings">
-                            <template #icon>
-                                <t-icon name="setting" />
-                            </template>
-                        </t-button>
-                    </t-tooltip>
+                    <n-tooltip trigger="hover" placement="bottom">
+                        <template #trigger>
+                            <n-button text @click="toggleTheme" class="header-action-btn">
+                                <template #icon>
+                                    <n-icon :size="24" :component="SwapIcon" />
+                                </template>
+                            </n-button>
+                        </template>
+                        切换主题
+                    </n-tooltip>
+                    <n-tooltip trigger="hover" placement="bottom">
+                        <template #trigger>
+                            <n-button text @click="showHelp" class="header-action-btn">
+                                <template #icon>
+                                    <n-icon :size="24" :component="HelpIcon" />
+                                </template>
+                            </n-button>
+                        </template>
+                        帮助
+                    </n-tooltip>
+                    <n-tooltip trigger="hover" placement="bottom">
+                        <template #trigger>
+                            <n-button text @click="showSettings" class="header-action-btn">
+                                <template #icon>
+                                    <n-icon :size="24" :component="SettingsIcon" />
+                                </template>
+                            </n-button>
+                        </template>
+                        设置
+                    </n-tooltip>
                 </div>
-            </t-header>
-            <t-content class="content">
+            </n-layout-header>
+            <n-layout-content class="content">
                 <router-view v-slot="{ Component }">
                     <transition name="fade" mode="out-in">
                         <component :is="Component" />
                     </transition>
                 </router-view>
-            </t-content>
-        </t-layout>
-    </t-layout>
+            </n-layout-content>
+        </n-layout>
+    </n-layout>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, h } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
-import { MessagePlugin } from 'tdesign-vue-next'
+import { useMessage, NIcon } from 'naive-ui'
+import {
+    Home as HomeIcon,
+    Image as ImageIcon,
+    ArrowsHorizontal as SwapIcon,
+    ZoomIn as ZoomInIcon,
+    Mobile as ScreenshotIcon,
+    Flow as WorkflowIcon,
+    TextAlignLeft as WatermarkIcon,
+    Help as HelpIcon,
+    Settings as SettingsIcon
+} from '@vicons/carbon'
 
 const route = useRoute()
 const router = useRouter()
 const settingsStore = useSettingsStore()
+const message = useMessage()
 
 const currentRoute = computed({
     get: () => route.path,
@@ -109,17 +87,55 @@ const currentTitle = computed(() => {
     return route.meta?.title || 'ImageBox'
 })
 
+const menuOptions = computed(() => [
+    {
+        label: '首页',
+        key: '/',
+        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(HomeIcon) })])])
+    },
+    {
+        label: '图片压缩',
+        key: '/compress',
+        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(ImageIcon) })])])
+    },
+    {
+        label: '添加水印',
+        key: '/watermark',
+        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(WatermarkIcon) })])])
+    },
+    {
+        label: '格式转换',
+        key: '/convert',
+        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(SwapIcon) })])])
+    },
+    {
+        label: '尺寸调整',
+        key: '/resize',
+        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(ZoomInIcon) })])])
+    },
+    {
+        label: '截图美化',
+        key: '/screenshot',
+        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(ScreenshotIcon) })])])
+    },
+    {
+        label: '批量工作流',
+        key: '/workflow',
+        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(WorkflowIcon) })])])
+    }
+])
+
 const toggleTheme = () => {
     settingsStore.toggleTheme()
-    MessagePlugin.success(`已切换到${settingsStore.theme === 'dark' ? '浅色' : '深色'}主题`)
+    message.success(`已切换到${settingsStore.theme === 'dark' ? '浅色' : '深色'}主题`)
 }
 
 const showHelp = () => {
-    MessagePlugin.info('帮助文档正在开发中...')
+    message.info('帮助文档正在开发中...')
 }
 
 const showSettings = () => {
-    MessagePlugin.info('设置面板正在开发中...')
+    message.info('设置面板正在开发中...')
 }
 </script>
 
@@ -130,70 +146,79 @@ const showSettings = () => {
 }
 
 .sidebar {
-    background-color: var(--ib-bg-card);
+    background-color: var(--n-card-color);
     display: flex;
     flex-direction: column;
     min-height: 100%;
 }
 
 .sidebar-header {
-    padding: 24px 20px;
+    padding: 16px 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid var(--ib-border);
+    gap: 10px;
+    border-bottom: 1px solid var(--n-border-color);
+    flex-shrink: 0;
 }
 
 .logo-icon {
-    font-size: 28px;
+    font-size: 24px;
 }
 
 .logo-text {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
-    color: var(--ib-text-primary);
+    color: var(--n-text-color);
 }
 
 .sidebar-menu {
     flex: 1;
     border: none;
-    padding: 16px 12px;
+    padding: 12px 8px;
     overflow-y: auto;
-    background-color: var(--ib-bg-card) !important;
+    background-color: transparent !important;
+    min-height: 0;
 }
 
 .main-layout {
-    background-color: var(--ib-bg-page);
+    background-color: var(--n-color);
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
 }
 
 .header {
-    height: 64px;
-    padding: 0 24px;
+    height: 56px;
+    padding: 0 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: var(--ib-bg-card);
-    border-bottom: 1px solid var(--ib-border);
+    background-color: var(--n-card-color);
+    border-bottom: 1px solid var(--n-border-color);
+    flex-shrink: 0;
 }
 
 .header-title {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
-    color: var(--ib-text-primary);
+    color: var(--n-text-color);
 }
 
 .header-actions {
     display: flex;
-    gap: 8px;
+    gap: 4px;
+}
+
+.header-action-btn {
+    padding: 4px !important;
 }
 
 .content {
     flex: 1;
-    padding: 24px;
+    padding: 16px;
     overflow-y: auto;
+    min-height: 0;
 }
 
 /* 页面切换动画 */

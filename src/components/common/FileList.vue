@@ -2,9 +2,9 @@
   <div class="file-list">
     <div class="file-list-header">
       <span>待处理列表 ({{ files.length }})</span>
-      <t-button theme="default" variant="text" size="small" @click="$emit('clear')">
+      <n-button text size="small" @click="$emit('clear')">
         清空
-      </t-button>
+      </n-button>
     </div>
     <div class="file-list-content">
       <div
@@ -14,7 +14,7 @@
       >
         <div class="file-thumb">
           <img v-if="file.preview" :src="file.preview" alt="" />
-          <t-icon v-else name="image" size="32px" />
+          <n-icon v-else :component="ImageIcon" :size="32" />
         </div>
         <div class="file-info">
           <div class="file-name">{{ file.name }}</div>
@@ -27,33 +27,35 @@
           </div>
         </div>
         <div class="file-status">
-          <t-tag v-if="file.status === 'pending'" theme="default" variant="light">
+          <n-tag v-if="file.status === 'pending'" type="default">
             待处理
-          </t-tag>
-          <t-tag v-else-if="file.status === 'processing'" theme="warning" variant="light">
+          </n-tag>
+          <n-tag v-else-if="file.status === 'processing'" type="warning">
             处理中
-          </t-tag>
-          <t-tag v-else-if="file.status === 'done'" theme="success" variant="light">
+          </n-tag>
+          <n-tag v-else-if="file.status === 'done'" type="success">
             完成
-          </t-tag>
-          <t-tag v-else-if="file.status === 'error'" theme="error" variant="light">
+          </n-tag>
+          <n-tag v-else-if="file.status === 'error'" type="error">
             失败
-          </t-tag>
+          </n-tag>
         </div>
         <div class="file-action">
-          <t-button theme="default" variant="text" size="small" @click="$emit('remove', file.id)">
+          <n-button text size="small" @click="$emit('remove', file.id)">
             <template #icon>
-              <t-icon name="close" />
+              <n-icon :component="CloseIcon" />
             </template>
-          </t-button>
+          </n-button>
         </div>
       </div>
-      <t-empty v-if="files.length === 0" description="暂无文件" />
+      <n-empty v-if="files.length === 0" description="暂无文件" />
     </div>
   </div>
 </template>
 
 <script setup>
+import { Image as ImageIcon, Close as CloseIcon } from '@vicons/carbon'
+
 defineProps({
   files: {
     type: Array,
@@ -80,38 +82,38 @@ const calculateSaved = (file) => {
 
 <style scoped>
 .file-list {
-    border: 1px solid var(--ib-border);
-    border-radius: 8px;
+    border: 1px solid var(--n-border-color);
+    border-radius: 6px;
     overflow: hidden;
-    background-color: var(--ib-bg-card);
+    background-color: var(--n-card-color);
 }
 
 .file-list-header {
-    padding: 14px 16px;
-    background-color: var(--ib-bg-input);
+    padding: 12px 14px;
+    background-color: var(--n-input-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
 }
 
 .file-list-content {
-    max-height: 400px;
+    max-height: 350px;
     overflow-y: auto;
 }
 
 .file-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--ib-border);
-    transition: background-color 0.2s;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--n-border-color);
+    transition: none;
 }
 
 .file-item:hover {
-    background-color: var(--ib-bg-hover);
+    background-color: var(--n-color-target);
 }
 
 .file-item:last-child {
@@ -119,14 +121,14 @@ const calculateSaved = (file) => {
 }
 
 .file-thumb {
-    width: 56px;
-    height: 56px;
-    border-radius: 6px;
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--ib-bg-input);
+    background-color: var(--n-input-color);
     flex-shrink: 0;
 }
 
@@ -142,24 +144,24 @@ const calculateSaved = (file) => {
 }
 
 .file-name {
-    font-size: 14px;
-    color: var(--ib-text-primary);
+    font-size: 13px;
+    color: var(--n-text-color);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .file-meta {
-    font-size: 12px;
-    color: var(--ib-text-secondary);
+    font-size: 11px;
+    color: var(--n-text-color-2);
     display: flex;
     gap: 8px;
     align-items: center;
 }
 
 .file-saved {
-    color: var(--ib-success);
+    color: var(--n-success-color);
     font-weight: 500;
 }
 

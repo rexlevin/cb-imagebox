@@ -1,6 +1,6 @@
 <template>
   <div class="convert-view">
-    <t-card class="format-card" title="目标格式">
+    <n-card class="format-card" title="目标格式">
       <div class="format-grid">
         <div
           v-for="fmt in formats"
@@ -13,24 +13,24 @@
           <div class="format-name">{{ fmt.name }}</div>
         </div>
       </div>
-    </t-card>
+    </n-card>
 
-    <t-card class="options-card" title="转换选项">
-      <t-form :data="settings" label-align="top">
-        <t-checkbox v-model="settings.keepTransparency">保留透明通道 (仅 PNG/WebP)</t-checkbox>
-        <t-checkbox v-model="settings.keepExif" style="margin-top: 12px">保留 EXIF 信息</t-checkbox>
-        <t-form-item v-if="settings.format === 'jpeg'" label="JPEG 质量" style="margin-top: 16px">
-          <t-slider v-model="settings.quality" :min="10" :max="100" />
+    <n-card class="options-card" title="转换选项">
+      <n-form :model="settings" label-placement="top">
+        <n-checkbox v-model:checked="settings.keepTransparency">保留透明通道 (仅 PNG/WebP)</n-checkbox>
+        <n-checkbox v-model:checked="settings.keepExif" style="margin-top: 12px">保留 EXIF 信息</n-checkbox>
+        <n-form-item v-if="settings.format === 'jpeg'" label="JPEG 质量" style="margin-top: 16px">
+          <n-slider v-model:value="settings.quality" :min="10" :max="100" :step="1" />
           <div class="quality-value">{{ settings.quality }}%</div>
-        </t-form-item>
-      </t-form>
-    </t-card>
+        </n-form-item>
+      </n-form>
+    </n-card>
 
     <ImageUploader multiple @upload="handleUpload" />
     <FileList :files="files" @remove="handleRemove" @clear="handleClear" />
-    <t-button theme="primary" size="large" :loading="processing" block @click="handleConvert">
+    <n-button type="primary" size="large" :loading="processing" block @click="handleConvert">
       开始转换
-    </t-button>
+    </n-button>
   </div>
 </template>
 
@@ -92,56 +92,56 @@ const handleConvert = async () => {
 .convert-view {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    max-width: 900px;
+    gap: 16px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
 .format-card,
 .options-card {
-    background-color: var(--ib-bg-card);
+    background-color: var(--n-card-color);
 }
 
 .format-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
 }
 
 .format-item {
-    padding: 20px 12px;
+    padding: 14px 8px;
     text-align: center;
-    background-color: var(--ib-bg-input);
-    border: 2px solid var(--ib-border);
-    border-radius: 8px;
+    background-color: var(--n-input-color);
+    border: 2px solid var(--n-border-color);
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: none;
 }
 
 .format-item:hover {
-    border-color: var(--ib-primary-light);
-    background-color: var(--ib-bg-hover);
+    border-color: var(--n-primary-color-hover);
+    background-color: var(--n-color-target);
 }
 
 .format-item.active {
-    border-color: var(--ib-primary);
-    background-color: var(--ib-bg-hover);
+    border-color: var(--n-primary-color);
+    background-color: var(--n-color-target);
 }
 
 .format-icon {
-    font-size: 32px;
-    margin-bottom: 8px;
+    font-size: 28px;
+    margin-bottom: 6px;
 }
 
 .format-name {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
 }
 
 .quality-value {
     text-align: right;
     font-size: 12px;
-    color: var(--ib-text-secondary);
-    margin-top: 8px;
+    color: var(--n-text-color-2);
+    margin-top: 6px;
 }
 </style>

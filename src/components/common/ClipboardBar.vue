@@ -5,19 +5,20 @@
       <span class="clipboard-text">剪贴板检测到图片</span>
     </div>
     <div class="clipboard-actions">
-      <t-button theme="primary" size="small" @click="$emit('import')">
+      <n-button type="primary" size="small" @click="$emit('import')">
         快速导入
-      </t-button>
-      <t-button theme="default" variant="text" size="small" @click="$emit('dismiss')">
+      </n-button>
+      <n-button text size="small" @click="$emit('dismiss')">
         <template #icon>
-          <t-icon name="close" />
+          <n-icon :component="CloseIcon" />
         </template>
-      </t-button>
+      </n-button>
     </div>
   </div>
 </template>
 
 <script setup>
+import { Close as CloseIcon } from '@vicons/carbon'
 defineEmits(['import', 'dismiss'])
 </script>
 

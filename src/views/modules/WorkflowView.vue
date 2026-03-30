@@ -1,20 +1,20 @@
 <template>
     <div class="workflow-view">
-        <t-card class="presets-card" title="选择预设流程">
+        <n-card class="presets-card" title="选择预设流程">
             <div class="presets-grid">
-                <t-card v-for="preset in presets" :key="preset.id" class="preset-card" hover-shadow
+                <n-card v-for="preset in presets" :key="preset.id" class="preset-card" hoverable
                     @click="applyPreset(preset)">
                     <div class="preset-icon">{{ preset.icon }}</div>
                     <div class="preset-title">{{ preset.title }}</div>
                     <div class="preset-desc">{{ preset.desc }}</div>
-                    <t-button theme="primary" variant="outline" size="small" block>
+                    <n-button type="primary" ghost size="small" block>
                         使用
-                    </t-button>
-                </t-card>
+                    </n-button>
+                </n-card>
             </div>
-        </t-card>
+        </n-card>
 
-        <t-card class="workflow-card" title="自定义流程">
+        <n-card class="workflow-card" title="自定义流程">
             <div class="workflow-steps">
                 <div v-for="(step, index) in steps" :key="step.id" class="workflow-step">
                     <div class="step-header">
@@ -22,79 +22,84 @@
                         <span class="step-type">{{ getStepType(step.type) }}</span>
                         <span class="step-desc">{{ step.description }}</span>
                         <div class="step-actions">
-                            <t-button theme="default" variant="text" size="small">
+                            <n-button text size="small">
                                 <template #icon>
-                                    <t-icon name="edit" />
+                                    <n-icon :component="EditIcon" />
                                 </template>
-                            </t-button>
-                            <t-button theme="default" variant="text" size="small" @click="removeStep(index)">
+                            </n-button>
+                            <n-button text size="small" @click="removeStep(index)">
                                 <template #icon>
-                                    <t-icon name="delete" />
+                                    <n-icon :component="DeleteIcon" />
                                 </template>
-                            </t-button>
+                            </n-button>
                         </div>
                     </div>
                 </div>
 
-                <t-button v-if="steps.length === 0" class="add-step-btn" variant="dashed" block
+                <n-button v-if="steps.length === 0" class="add-step-btn" dashed block
                     @click="showAddStep = true">
                     <template #icon>
-                        <t-icon name="add" />
+                        <n-icon :component="AddIcon" />
                     </template>
                     添加步骤
-                </t-button>
+                </n-button>
             </div>
 
-            <t-button v-if="steps.length > 0" class="add-step-btn" variant="dashed" block @click="showAddStep = true">
+            <n-button v-if="steps.length > 0" class="add-step-btn" dashed block @click="showAddStep = true">
                 <template #icon>
-                    <t-icon name="add" />
+                    <n-icon :component="AddIcon" />
                 </template>
                 添加步骤
-            </t-button>
-        </t-card>
+            </n-button>
+        </n-card>
 
-        <t-card class="batch-card" title="批量处理">
+        <n-card class="batch-card" title="批量处理">
             <ImageUploader multiple @upload="handleUpload" />
-            <t-form label-align="top" style="margin-top: 16px">
-                <t-form-item label="输出目录">
-                    <t-input v-model="outputDir" placeholder="选择输出目录">
+            <n-form label-placement="top" style="margin-top: 16px">
+                <n-form-item label="输出目录">
+                    <n-input v-model:value="outputDir" placeholder="选择输出目录">
                         <template #suffix>
-                            <t-button theme="default" variant="text" size="small">
+                            <n-button text size="small">
                                 浏览
-                            </t-button>
+                            </n-button>
                         </template>
-                    </t-input>
-                </t-form-item>
-                <t-form-item label="命名规则">
-                    <t-input v-model="namingRule" placeholder="{原文件名}_压缩" />
-                </t-form-item>
-                <t-form-item label="输出格式">
-                    <t-radio-group v-model="outputFormat">
-                        <t-radio value="original">保持原格式</t-radio>
-                        <t-radio value="jpeg">全部转为 JPEG</t-radio>
-                    </t-radio-group>
-                </t-form-item>
-            </t-form>
-        </t-card>
+                    </n-input>
+                </n-form-item>
+                <n-form-item label="命名规则">
+                    <n-input v-model:value="namingRule" placeholder="{原文件名}_压缩" />
+                </n-form-item>
+                <n-form-item label="输出格式">
+                    <n-radio-group v-model:value="outputFormat">
+                        <n-radio value="original">保持原格式</n-radio>
+                        <n-radio value="jpeg">全部转为 JPEG</n-radio>
+                    </n-radio-group>
+                </n-form-item>
+            </n-form>
+        </n-card>
 
         <FileList :files="files" @remove="handleRemove" @clear="handleClear" />
-        <t-button theme="primary" size="large" :loading="processing" block @click="handleBatchProcess">
+        <n-button type="primary" size="large" :loading="processing" block @click="handleBatchProcess">
             开始批量处理
-        </t-button>
+        </n-button>
 
-        <t-dialog v-model:visible="showAddStep" header="添加步骤" @confirm="confirmAddStep" @cancel="showAddStep = false">
-            <t-form label-align="top">
-                <t-form-item label="步骤类型">
-                    <t-select v-model="newStepType" :options="stepTypes" />
-                </t-form-item>
-            </t-form>
-        </t-dialog>
+        <n-modal v-model:show="showAddStep" preset="card" title="添加步骤">
+            <n-form label-placement="top">
+                <n-form-item label="步骤类型">
+                    <n-select v-model:value="newStepType" :options="stepTypes" />
+                </n-form-item>
+            </n-form>
+            <template #footer>
+                <n-button @click="showAddStep = false">取消</n-button>
+                <n-button type="primary" @click="confirmAddStep">确定</n-button>
+            </template>
+        </n-modal>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { MessagePlugin } from 'tdesign-vue-next'
+import { useMessage } from 'naive-ui'
+import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@vicons/carbon'
 import ImageUploader from '@/components/common/ImageUploader.vue'
 import FileList from '@/components/common/FileList.vue'
 
@@ -106,6 +111,7 @@ const processing = ref(false)
 const outputDir = ref('')
 const namingRule = ref('{原文件名}_压缩')
 const outputFormat = ref('original')
+const message = useMessage()
 
 const presets = [
     {
@@ -153,7 +159,7 @@ const applyPreset = (preset) => {
         id: Date.now() + index,
         ...step
     }))
-    MessagePlugin.success(`已应用预设: ${preset.title}`)
+    message.success(`已应用预设: ${preset.title}`)
 }
 
 const removeStep = (index) => {
@@ -200,11 +206,11 @@ const handleClear = () => {
 
 const handleBatchProcess = async () => {
     if (steps.value.length === 0) {
-        MessagePlugin.warning('请先添加处理步骤')
+        message.warning('请先添加处理步骤')
         return
     }
     if (files.value.length === 0) {
-        MessagePlugin.warning('请先上传文件')
+        message.warning('请先上传文件')
         return
     }
 
@@ -220,28 +226,28 @@ const handleBatchProcess = async () => {
 .workflow-view {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    max-width: 1000px;
+    gap: 16px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 .presets-card,
 .workflow-card,
 .batch-card {
-    background-color: var(--ib-bg-card);
+    background-color: var(--n-card-color);
 }
 
 .presets-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
 }
 
 .preset-card {
-    padding: 20px;
+    padding: 16px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: none;
 }
 
 .preset-card:hover {
@@ -249,61 +255,61 @@ const handleBatchProcess = async () => {
 }
 
 .preset-icon {
-    font-size: 36px;
-    margin-bottom: 12px;
+    font-size: 32px;
+    margin-bottom: 10px;
 }
 
 .preset-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .preset-desc {
     font-size: 13px;
-    color: var(--ib-text-secondary);
-    margin-bottom: 16px;
+    color: var(--n-text-color-2);
+    margin-bottom: 12px;
 }
 
 .workflow-steps {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .workflow-step {
-    padding: 16px;
-    background-color: var(--ib-bg-input);
-    border: 1px solid var(--ib-border);
-    border-radius: 8px;
+    padding: 12px;
+    background-color: var(--n-input-color);
+    border: 1px solid var(--n-border-color);
+    border-radius: 6px;
 }
 
 .step-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .step-number {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--ib-primary);
+    background-color: var(--n-primary-color);
     border-radius: 50%;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
 }
 
 .step-type {
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .step-desc {
     flex: 1;
-    font-size: 14px;
-    color: var(--ib-text-secondary);
+    font-size: 13px;
+    color: var(--n-text-color-2);
 }
 
 .step-actions {
@@ -312,6 +318,6 @@ const handleBatchProcess = async () => {
 }
 
 .add-step-btn {
-    margin-top: 12px;
+    margin-top: 10px;
 }
 </style>

@@ -3,20 +3,20 @@
         <ImageUploader multiple @upload="handleUpload" />
 
         <div class="settings-container">
-            <t-card class="settings-card" title="水印设置">
-                <t-form :data="settings" label-align="top" label-width="100px">
-                    <t-form-item label="水印类型">
-                        <t-radio-group v-model="settings.type">
-                            <t-radio value="text">文字水印</t-radio>
-                            <t-radio value="image">图片水印</t-radio>
-                        </t-radio-group>
-                    </t-form-item>
+            <n-card class="settings-card" title="水印设置">
+                <n-form :model="settings" label-placement="top" label-width="100px">
+                    <n-form-item label="水印类型">
+                        <n-radio-group v-model:value="settings.type">
+                            <n-radio value="text">文字水印</n-radio>
+                            <n-radio value="image">图片水印</n-radio>
+                        </n-radio-group>
+                    </n-form-item>
 
-                    <t-form-item v-if="settings.type === 'text'" label="文字内容">
-                        <t-input v-model="settings.text" placeholder="输入水印文字" size="large" />
-                    </t-form-item>
+                    <n-form-item v-if="settings.type === 'text'" label="文字内容">
+                        <n-input v-model:value="settings.text" placeholder="输入水印文字" size="large" />
+                    </n-form-item>
 
-                    <t-form-item label="水印位置">
+                    <n-form-item label="水印位置">
                         <div class="position-grid">
                             <div
                                 v-for="pos in positions"
@@ -28,47 +28,47 @@
                                 {{ pos.label }}
                             </div>
                         </div>
-                    </t-form-item>
+                    </n-form-item>
 
                     <template v-if="settings.type === 'text'">
-                        <t-form-item label="字体大小">
+                        <n-form-item label="字体大小">
                             <div class="slider-container">
-                                <t-slider
-                                    v-model="settings.fontSize"
+                                <n-slider
+                                    v-model:value="settings.fontSize"
                                     :min="12"
                                     :max="72"
-                                    :marks="{ 12: '12px', 24: '24px', 48: '48px', 72: '72px' }"
+                                    :step="1"
                                     style="flex: 1"
                                 />
                                 <div class="value-display">{{ settings.fontSize }}px</div>
                             </div>
-                        </t-form-item>
+                        </n-form-item>
 
-                        <t-form-item label="透明度">
+                        <n-form-item label="透明度">
                             <div class="slider-container">
-                                <t-slider
-                                    v-model="settings.opacity"
+                                <n-slider
+                                    v-model:value="settings.opacity"
                                     :min="10"
                                     :max="100"
-                                    :marks="{ 10: '10%', 50: '50%', 100: '100%' }"
+                                    :step="1"
                                     style="flex: 1"
                                 />
                                 <div class="value-display">{{ settings.opacity }}%</div>
                             </div>
-                        </t-form-item>
+                        </n-form-item>
 
-                        <t-form-item label="文字颜色">
-                            <t-color-picker v-model="settings.color" />
-                        </t-form-item>
+                        <n-form-item label="文字颜色">
+                            <n-color-picker v-model:value="settings.color" />
+                        </n-form-item>
                     </template>
-                </t-form>
-            </t-card>
+                </n-form>
+            </n-card>
         </div>
 
         <FileList :files="files" @remove="handleRemove" @clear="handleClear" />
-        <t-button theme="primary" size="large" :loading="processing" block @click="handleAddWatermark">
+        <n-button type="primary" size="large" :loading="processing" block @click="handleAddWatermark">
             开始添加
-        </t-button>
+        </n-button>
     </div>
 </template>
 
@@ -136,59 +136,59 @@ const handleAddWatermark = async () => {
 .watermark-view {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    max-width: 900px;
+    gap: 16px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
 .settings-container {
-    margin: 8px 0;
+    margin: 4px 0;
 }
 
 .settings-card {
-    background-color: var(--ib-bg-card);
+    background-color: var(--n-card-color);
 }
 
 .position-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 8px;
 }
 
 .position-item {
-    padding: 14px;
+    padding: 10px;
     text-align: center;
-    background-color: var(--ib-bg-input);
-    border: 1px solid var(--ib-border);
-    border-radius: 6px;
+    background-color: var(--n-input-color);
+    border: 1px solid var(--n-border-color);
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s;
-    font-size: 14px;
-    color: var(--ib-text-secondary);
+    transition: none;
+    font-size: 13px;
+    color: var(--n-text-color-2);
 }
 
 .position-item:hover {
-    background-color: var(--ib-bg-hover);
-    color: var(--ib-text-primary);
+    background-color: var(--n-color-target);
+    color: var(--n-text-color);
 }
 
 .position-item.active {
-    background-color: var(--ib-primary);
-    border-color: var(--ib-primary);
+    background-color: var(--n-primary-color);
+    border-color: var(--n-primary-color);
     color: white;
 }
 
 .slider-container {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     width: 100%;
 }
 
 .value-display {
-    font-size: 14px;
-    color: var(--ib-text-secondary);
-    min-width: 56px;
+    font-size: 13px;
+    color: var(--n-text-color-2);
+    min-width: 48px;
     text-align: right;
     font-weight: 500;
 }
