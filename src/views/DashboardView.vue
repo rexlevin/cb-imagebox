@@ -67,6 +67,13 @@ const features = [
         path: '/screenshot'
     },
     {
+        id: 'join',
+        icon: '🧩',
+        title: '图片拼接',
+        desc: '长图/九宫格，横向/纵向',
+        path: '/join'
+    },
+    {
         id: 'workflow',
         icon: '⚡',
         title: '批量工作流',

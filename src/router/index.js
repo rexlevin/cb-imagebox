@@ -38,6 +38,12 @@ const routes = [
     meta: { title: '截图美化', icon: 'mobile' }
   },
   {
+    path: '/join',
+    name: 'Join',
+    component: () => import('../views/modules/JoinView.vue'),
+    meta: { title: '图片拼接', icon: 'join' }
+  },
+  {
     path: '/workflow',
     name: 'Workflow',
     component: () => import('../views/modules/WorkflowView.vue'),

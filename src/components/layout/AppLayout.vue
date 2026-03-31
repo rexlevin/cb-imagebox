@@ -70,7 +70,8 @@ import {
     Flow as WorkflowIcon,
     TextAlignLeft as WatermarkIcon,
     Help as HelpIcon,
-    Settings as SettingsIcon
+    Settings as SettingsIcon,
+    Grid as JoinIcon
 } from '@vicons/carbon'
 
 const route = useRoute()
@@ -91,37 +92,42 @@ const menuOptions = computed(() => [
     {
         label: '首页',
         key: '/',
-        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(HomeIcon) })])])
+        icon: () => h('span', { class: 'menu-icon' }, '🏠')
     },
     {
         label: '图片压缩',
         key: '/compress',
-        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(ImageIcon) })])])
+        icon: () => h('span', { class: 'menu-icon' }, '🗜️')
     },
     {
         label: '添加水印',
         key: '/watermark',
-        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(WatermarkIcon) })])])
+        icon: () => h('span', { class: 'menu-icon' }, '💧')
     },
     {
         label: '格式转换',
         key: '/convert',
-        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(SwapIcon) })])])
+        icon: () => h('span', { class: 'menu-icon' }, '🔄')
     },
     {
         label: '尺寸调整',
         key: '/resize',
-        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(ZoomInIcon) })])])
+        icon: () => h('span', { class: 'menu-icon' }, '📐')
     },
     {
         label: '截图美化',
         key: '/screenshot',
-        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(ScreenshotIcon) })])])
+        icon: () => h('span', { class: 'menu-icon' }, '📱')
+    },
+    {
+        label: '图片拼接',
+        key: '/join',
+        icon: () => h('span', { class: 'menu-icon' }, '🧩')
     },
     {
         label: '批量工作流',
         key: '/workflow',
-        icon: () => h('span', {}, [h('i', { class: 'carbon-icon' }, [h(NIcon, null, { default: () => h(WorkflowIcon) })])])
+        icon: () => h('span', { class: 'menu-icon' }, '⚡')
     }
 ])
 
