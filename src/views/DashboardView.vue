@@ -1,26 +1,25 @@
 <template>
     <div class="dashboard">
         <div class="welcome-section">
-            <h1 class="welcome-title">欢迎使用 ImageBox 👋</h1>
-            <p class="welcome-subtitle">选择下方工具开始处理图片</p>
+            <h1 class="welcome-title">ImageBox</h1>
+            <p class="welcome-subtitle">选择工具开始处理图片</p>
         </div>
 
         <div class="features-grid">
-            <n-card v-for="feature in features" :key="feature.id" class="feature-card" hoverable>
-                <div class="feature-top">
+            <n-card
+                v-for="feature in features"
+                :key="feature.id"
+                class="feature-card"
+                hoverable
+                @click="handleStart(feature.path)"
+            >
+                <div class="feature-content">
                     <div class="feature-icon">{{ feature.icon }}</div>
-                    <h3 class="feature-title">{{ feature.title }}</h3>
+                    <div class="feature-info">
+                        <h3 class="feature-title">{{ feature.title }}</h3>
+                        <p class="feature-desc">{{ feature.desc }}</p>
+                    </div>
                 </div>
-                <p class="feature-desc">{{ feature.desc }}</p>
-                <div class="feature-tags">
-                    <n-tag v-for="tag in feature.tags" :key="tag" size="small" type="default">
-                        {{ tag }}
-                    </n-tag>
-                </div>
-                <n-button class="feature-btn" type="primary" ghost block
-                    @click="handleStart(feature.path)">
-                    开始使用
-                </n-button>
             </n-card>
         </div>
     </div>
@@ -37,48 +36,42 @@ const features = [
         icon: '🗜️',
         title: '图片压缩',
         desc: '减小文件体积，保持画质',
-        path: '/compress',
-        tags: ['批量压缩', '智能质量']
+        path: '/compress'
     },
     {
         id: 'watermark',
         icon: '💧',
         title: '添加水印',
         desc: '文字/图片水印，位置可调',
-        path: '/watermark',
-        tags: ['文字水印', '图片水印']
+        path: '/watermark'
     },
     {
         id: 'convert',
         icon: '🔄',
         title: '格式转换',
         desc: 'HEIC/JPG/PNG/WebP 互转',
-        path: '/convert',
-        tags: ['HEIC支持', '批量转换']
+        path: '/convert'
     },
     {
         id: 'resize',
         icon: '📐',
         title: '尺寸调整',
         desc: '等比缩放，预设尺寸',
-        path: '/resize',
-        tags: ['等比缩放', '指定宽高']
+        path: '/resize'
     },
     {
         id: 'screenshot',
         icon: '📱',
         title: '截图美化',
         desc: '设备外壳，阴影背景',
-        path: '/screenshot',
-        tags: ['设备外壳', '渐变背景']
+        path: '/screenshot'
     },
     {
         id: 'workflow',
         icon: '⚡',
         title: '批量工作流',
         desc: '自定义流程，一键导出',
-        path: '/workflow',
-        tags: ['自定义流程', '批量处理']
+        path: '/workflow'
     }
 ]
 
@@ -91,86 +84,76 @@ const handleStart = (path) => {
 .dashboard {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 24px;
 }
 
 .welcome-section {
     text-align: center;
-    padding: 20px 0;
+    padding: 8px 0;
 }
 
 .welcome-title {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 600;
-    color: var(--ib-text-primary);
-    margin-bottom: 8px;
+    color: var(--n-text-color);
+    margin: 0 0 4px 0;
 }
 
 .welcome-subtitle {
-    font-size: 16px;
-    color: var(--ib-text-secondary);
+    font-size: 14px;
+    color: var(--n-text-color-2);
+    margin: 0;
 }
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
 }
 
 .feature-card {
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    min-height: 240px;
-    transition: all 0.3s ease;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
 .feature-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--ib-primary) !important;
+    border-color: var(--n-primary-color);
 }
 
-.feature-top {
+.feature-card :deep(.n-card__content) {
+    padding: 16px;
+}
+
+.feature-content {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 16px;
 }
 
 .feature-icon {
-    font-size: 40px;
+    font-size: 32px;
     line-height: 1;
+    flex-shrink: 0;
+}
+
+.feature-info {
+    flex: 1;
+    min-width: 0;
 }
 
 .feature-title {
-    font-size: 20px;
+    font-size: 15px;
     font-weight: 600;
-    color: var(--ib-text-primary);
-    margin: 0;
+    color: var(--n-text-color);
+    margin: 0 0 4px 0;
 }
 
 .feature-desc {
-    font-size: 14px;
-    color: var(--ib-text-secondary);
-    line-height: 1.6;
-    margin-bottom: 16px;
-    flex: 1;
-}
-
-.feature-tags {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-}
-
-.feature-tags .n-tag {
-    background-color: var(--ib-bg-hover) !important;
-    color: var(--ib-text-primary) !important;
-}
-
-.feature-btn {
-    margin-top: auto;
+    font-size: 12px;
+    color: var(--n-text-color-2);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 </style>
