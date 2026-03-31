@@ -219,6 +219,53 @@ interface ScreenshotOptions {
   caption?: string;
 }
 
+// JoinSettings.vue
+// 图片拼接设置
+interface Props {
+  modelValue: JoinOptions;
+}
+interface JoinOptions {
+  direction: 'horizontal' | 'vertical' | 'grid';
+  columns: number; // 仅网格模式
+  spacing: number;
+  backgroundColor: string;
+  borderRadius: number;
+  borderWidth: number;
+  borderColor: string;
+  outputFormat: 'jpg' | 'png' | 'webp';
+  outputQuality: number;
+  sizeStrategy: 'none' | 'equalWidth' | 'equalHeight' | 'forceUniform';
+  alignment: 'center' | 'start' | 'end';
+}
+
+// JoinPreview.vue
+// 拼接预览组件
+interface Props {
+  images: JoinImageItem[];
+  options: JoinOptions;
+  dimensions: { width: number; height: number; estimatedSize: string };
+}
+interface JoinImageItem {
+  id: string;
+  preview: string;
+  width: number;
+  height: number;
+  order: number;
+}
+
+// SortableImageList.vue
+// 可排序图片列表
+interface Props {
+  images: JoinImageItem[];
+  sortable: boolean;
+}
+interface Emits {
+  'reorder': (fromIndex: number, toIndex: number) => void;
+  'remove': (id: string) => void;
+  'moveUp': (index: number) => void;
+  'moveDown': (index: number) => void;
+}
+
 // WorkflowBuilder.vue
 // 工作流编辑器
 interface Props {
@@ -271,6 +318,10 @@ interface WorkflowPreset {
 // 截图美化页面
 // 无 props，使用 store
 
+// JoinView.vue
+// 图片拼接页面
+// 无 props，使用 store
+
 // WorkflowView.vue
 // 批量工作流页面
 // 无 props，使用 store
@@ -312,6 +363,11 @@ App
 │           │   ├── ImagePreview (DeviceFrame)
 │           │   ├── DeviceFrameSelector
 │           │   └── ScreenshotStyler
+│           ├── JoinView
+│           │   ├── JoinSettings
+│           │   ├── SortableImageList
+│           │   ├── JoinPreview
+│           │   └── ProcessingProgress
 │           └── WorkflowView
 │               ├── WorkflowPresets
 │               ├── WorkflowBuilder
@@ -341,7 +397,8 @@ App
 11. ConvertView + FormatSelector
 12. ResizeView + ResizeSettings
 13. ScreenshotView + DeviceFrameSelector + ScreenshotStyler
-14. WorkflowView + WorkflowBuilder + WorkflowPresets
+14. JoinView + JoinSettings + SortableImageList
+15. WorkflowView + WorkflowBuilder + WorkflowPresets
 
 ## 样式规范
 

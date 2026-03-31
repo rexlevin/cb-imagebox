@@ -48,6 +48,7 @@ Jimp 能力评估:
 | 裁剪 | ✅ | 支持 |
 | 水印(文字) | ✅ | 字体渲染 |
 | 水印(图片) | ✅ | 图层合成 |
+| 图片拼接 | ✅ | 横向/纵向/网格 |
 | 批量处理 | ✅ | 并发友好 |
 | EXIF | ⚠️ | 配合 exifr 库 |
 
@@ -118,6 +119,7 @@ cb-imagetoolkit/
 │   │   ├── watermark/         # 水印
 │   │   ├── converter/         # 格式转换
 │   │   ├── resizer/           # 尺寸调整
+│   │   ├── joiner/            # 图片拼接
 │   │   ├── screenshot/        # 截图美化
 │   │   └── workflow/          # 批量工作流
 │   ├── composables/           # 组合式函数
