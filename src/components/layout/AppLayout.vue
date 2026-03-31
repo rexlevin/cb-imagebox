@@ -188,21 +188,22 @@ const showSettings = () => {
 
 .main-layout {
     background-color: var(--n-color);
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    overflow: hidden !important;
 }
 
 .header {
     height: 56px;
+    min-height: 56px;
     padding: 0 16px;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: space-between;
     background-color: var(--n-card-color);
     border-bottom: 1px solid var(--n-border-color);
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
 }
 
 .header-title {
@@ -224,7 +225,9 @@ const showSettings = () => {
     flex: 1;
     padding: 16px;
     overflow-y: auto;
+    overflow-x: hidden;
     min-height: 0;
+    max-height: calc(100vh - 56px);
 }
 
 /* 页面切换动画 */
