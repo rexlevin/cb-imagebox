@@ -644,7 +644,11 @@ const handleJoin = async () => {
 }
 
 .image-item:hover {
-    background-color: var(--n-color-target, rgba(24, 160, 88, 0.1));
+    background-color: var(--n-hover-color, rgba(255, 255, 255, 0.05)) !important;
+}
+
+.image-item:hover .image-remove {
+    color: var(--n-error-color);
 }
 
 .drag-handle {
@@ -664,6 +668,26 @@ const handleJoin = async () => {
     justify-content: center;
     background-color: var(--n-color-target, rgba(24, 160, 88, 0.1));
     flex-shrink: 0;
+}
+
+.image-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.image-actions .n-button {
+    color: var(--n-text-color-3);
+}
+
+.image-item:hover .image-actions .n-button {
+    color: var(--n-text-color);
+}
+
+.image-remove {
+    flex-shrink: 0;
+    padding: 2px !important;
+    color: var(--n-text-color-3);
 }
 
 .image-thumb img {

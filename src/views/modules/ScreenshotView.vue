@@ -446,7 +446,11 @@ const handleExport = async () => {
 }
 
 .file-item:hover {
-    background-color: var(--n-color-target);
+    background-color: var(--n-hover-color, rgba(255, 255, 255, 0.05)) !important;
+}
+
+.file-item:hover .file-remove {
+    color: var(--n-error-color);
 }
 
 .file-thumb {
@@ -454,7 +458,7 @@ const handleExport = async () => {
     height: 40px;
     border-radius: 4px;
     overflow: hidden;
-    background-color: var(--n-color-target);
+    background-color: var(--n-color-target, rgba(24, 160, 88, 0.1));
     flex-shrink: 0;
 }
 
@@ -492,6 +496,7 @@ const handleExport = async () => {
 .file-remove {
     flex-shrink: 0;
     padding: 2px !important;
+    color: var(--n-text-color-3);
 }
 
 .footer-actions {

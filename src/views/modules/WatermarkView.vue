@@ -746,11 +746,23 @@ const addImageWatermark = async (ctx, canvas) => {
 }
 
 .file-item:hover {
-    background-color: var(--n-hover-color, rgba(255, 255, 255, 0.05));
+    background-color: var(--n-hover-color, rgba(255, 255, 255, 0.05)) !important;
 }
 
 .file-item:hover .file-remove {
-    color: var(--n-text-color);
+    color: var(--n-error-color);
+}
+
+.file-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--n-color-target, rgba(24, 160, 88, 0.1));
+    flex-shrink: 0;
 }
 
 .file-thumb {
