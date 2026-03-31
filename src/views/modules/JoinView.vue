@@ -120,6 +120,7 @@
             <template #header-extra>
                 <div class="header-actions">
                     <n-upload
+                        ref="uploadRef"
                         :show-file-list="false"
                         accept="image/*"
                         multiple
@@ -293,6 +294,7 @@ const images = ref([])
 const processing = ref(false)
 const isDragging = ref(false)
 const dragIndex = ref(null)
+const uploadRef = ref(null)
 const message = useMessage()
 
 const formatSize = (bytes) => {
@@ -359,11 +361,26 @@ const handleDrop = (e) => {
 }
 
 const handleRemove = (id) => {
+    const imageToRemove = images.value.find(img => img.id === id)
+    if (imageToRemove?.preview) {
+        URL.revokeObjectURL(imageToRemove.preview)
+    }
     images.value = images.value.filter(img => img.id !== id)
+    if (images.value.length === 0) {
+        if (uploadRef.value) {
+            uploadRef.value.clear()
+        }
+    }
 }
 
 const handleClear = () => {
+    images.value.forEach(img => {
+        if (img.preview) URL.revokeObjectURL(img.preview)
+    })
     images.value = []
+    if (uploadRef.value) {
+        uploadRef.value.clear()
+    }
     message.info('已清空')
 }
 

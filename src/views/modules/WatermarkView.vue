@@ -112,6 +112,7 @@
             <template #header-extra>
                 <div class="header-actions">
                     <n-upload
+                        ref="uploadRef"
                         :show-file-list="false"
                         accept="image/*"
                         multiple
@@ -163,13 +164,16 @@
                     class="file-item"
                 >
                     <div class="file-thumb">
-                        <img v-if="file.preview" :src="file.preview" alt="" />
+                        <img v-if="file.result" :src="file.result.url" alt="" />
+                        <img v-else-if="file.preview" :src="file.preview" alt="" />
                     </div>
                     <div class="file-info">
                         <div class="file-name">{{ file.name }}</div>
                         <div class="file-meta">
-                            <span>{{ formatSize(file.size) }}</span>
-                            <span v-if="file.dimensions">· {{ file.dimensions }}</span>
+                            <span v-if="!file.result">{{ formatSize(file.size) }}</span>
+                            <span v-else>
+                                {{ formatSize(file.size) }} → {{ formatSize(file.result.size) }}
+                            </span>
                         </div>
                     </div>
                     <div class="file-status">
@@ -203,6 +207,7 @@
             <template #footer v-if="files.length > 0">
                 <div class="footer-actions">
                     <n-button
+                        v-if="!showResult"
                         type="primary"
                         :loading="processing"
                         block
@@ -210,6 +215,33 @@
                     >
                         开始添加水印 ({{ files.length }})
                     </n-button>
+
+                    <div v-if="showResult" class="result-summary">
+                        <div class="result-stat">
+                            <span class="stat-label">成功:</span>
+                            <span class="stat-value">{{ files.filter(f => f.status === 'done').length }}/{{ files.length }}</span>
+                        </div>
+                        <div class="result-buttons">
+                            <n-button type="primary" size="small" @click="downloadAll">
+                                <template #icon>
+                                    <n-icon :size="14"><DownloadIcon /></n-icon>
+                                </template>
+                                下载全部
+                            </n-button>
+                            <n-button size="small" @click="continueAdd">
+                                <template #icon>
+                                    <n-icon :size="14"><UploadIcon /></n-icon>
+                                </template>
+                                继续
+                            </n-button>
+                            <n-button size="small" @click="reset">
+                                <template #icon>
+                                    <n-icon :size="14"><DeleteIcon /></n-icon>
+                                </template>
+                                重置
+                            </n-button>
+                        </div>
+                    </div>
                 </div>
             </template>
         </n-card>
@@ -219,13 +251,14 @@
 <script setup>
 import { ref } from 'vue'
 import { useMessage } from 'naive-ui'
-import { Upload, Paste, Delete, Image, Close } from '@vicons/carbon'
+import { Upload, Paste, Delete, Image, Close, Download } from '@vicons/carbon'
 
 const UploadIcon = Upload
 const PasteIcon = Paste
 const TrashIcon = Delete
 const ImageIcon = Image
 const CloseIcon = Close
+const DownloadIcon = Download
 
 const settings = ref({
     type: 'text',
@@ -253,6 +286,9 @@ const positions = [
 const files = ref([])
 const processing = ref(false)
 const isDragging = ref(false)
+const uploadRef = ref(null)
+const showResult = ref(false)
+const watermarkImage = ref(null)
 const message = useMessage()
 
 const formatSize = (bytes) => {
@@ -277,9 +313,21 @@ const handleFileChange = (fileList) => {
 }
 
 const handleWatermarkImageChange = (fileList) => {
-    // TODO: 处理水印图片上传
     if (fileList && fileList.length > 0) {
-        message.success('水印图片已选择')
+        const file = fileList[0]
+        if (file.file) {
+            const img = new Image()
+            img.onload = () => {
+                watermarkImage.value = img
+                message.success('水印图片已选择')
+            }
+            img.onerror = () => {
+                message.error('水印图片加载失败')
+            }
+            img.src = URL.createObjectURL(file.file)
+        }
+    } else {
+        watermarkImage.value = null
     }
 }
 
@@ -313,12 +361,66 @@ const handleDrop = (e) => {
 }
 
 const handleRemove = (id) => {
+    const fileToRemove = files.value.find(f => f.id === id)
+    if (fileToRemove?.preview) {
+        URL.revokeObjectURL(fileToRemove.preview)
+    }
+    if (fileToRemove?.result?.url) {
+        URL.revokeObjectURL(fileToRemove.result.url)
+    }
     files.value = files.value.filter(f => f.id !== id)
+    if (files.value.length === 0) {
+        showResult.value = false
+        if (uploadRef.value) {
+            uploadRef.value.clear()
+        }
+    }
 }
 
 const handleClear = () => {
+    files.value.forEach(f => {
+        if (f.preview) URL.revokeObjectURL(f.preview)
+        if (f.result?.url) URL.revokeObjectURL(f.result.url)
+    })
     files.value = []
+    showResult.value = false
+    if (uploadRef.value) {
+        uploadRef.value.clear()
+    }
     message.info('已清空')
+}
+
+const downloadAll = () => {
+    files.value.forEach((file) => {
+        if (file.result) {
+            const link = document.createElement('a')
+            link.href = file.result.url
+            const ext = settings.value.type === 'text' ? 'png' : file.name.split('.').pop()
+            link.download = `${file.name.split('.')[0]}_watermarked.${ext}`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+        }
+    })
+    message.success('下载已开始')
+}
+
+const continueAdd = () => {
+    showResult.value = false
+    message.info('请继续添加图片')
+}
+
+const reset = () => {
+    files.value.forEach(f => {
+        if (f.preview) URL.revokeObjectURL(f.preview)
+        if (f.result?.url) URL.revokeObjectURL(f.result.url)
+    })
+    files.value = []
+    showResult.value = false
+    if (uploadRef.value) {
+        uploadRef.value.clear()
+    }
+    message.info('已重置')
 }
 
 const handleAddWatermark = async () => {
@@ -327,16 +429,181 @@ const handleAddWatermark = async () => {
         return
     }
 
+    if (settings.value.type === 'text' && !settings.value.text) {
+        message.warning('请输入水印文字')
+        return
+    }
+
+    if (settings.value.type === 'image' && !watermarkImage.value) {
+        message.warning('请选择水印图片')
+        return
+    }
+
     processing.value = true
+
     try {
-        // TODO: 实现水印添加逻辑
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        for (const file of files.value) {
+            file.status = 'processing'
+
+            try {
+                // 读取原图
+                const originalImage = new window.Image()
+                await new Promise((resolve, reject) => {
+                    originalImage.onload = resolve
+                    originalImage.onerror = reject
+                    originalImage.src = file.preview
+                })
+
+                // 创建 Canvas
+                const canvas = document.createElement('canvas')
+                canvas.width = originalImage.naturalWidth
+                canvas.height = originalImage.naturalHeight
+                const ctx = canvas.getContext('2d')
+
+                // 绘制原图
+                ctx.drawImage(originalImage, 0, 0)
+
+                // 添加水印
+                if (settings.value.type === 'text') {
+                    await addTextWatermark(ctx, canvas)
+                } else {
+                    await addImageWatermark(ctx, canvas)
+                }
+
+                // 生成结果
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(resolve, 'image/png')
+                })
+
+                file.result = {
+                    blob,
+                    size: blob.size,
+                    url: URL.createObjectURL(blob)
+                }
+                file.status = 'done'
+
+                // 释放原图预览
+                if (file.preview !== URL.createObjectURL(file.file)) {
+                    URL.revokeObjectURL(file.preview)
+                }
+            } catch (err) {
+                console.error('处理失败:', err)
+                file.status = 'error'
+            }
+        }
+
+        showResult.value = true
         message.success('水印添加完成')
     } catch (error) {
+        console.error('处理失败:', error)
         message.error('处理失败')
     } finally {
         processing.value = false
     }
+}
+
+const addTextWatermark = async (ctx, canvas) => {
+    const { text, fontSize, opacity, color, rotation, position, tile } = settings.value
+
+    ctx.save()
+    ctx.globalAlpha = opacity / 100
+    ctx.fillStyle = color
+    ctx.font = `${fontSize}px sans-serif`
+    ctx.textBaseline = 'middle'
+    ctx.textAlign = 'center'
+
+    const textWidth = ctx.measureText(text).width
+    const textHeight = fontSize
+
+    if (tile) {
+        // 平铺模式
+        const padding = textWidth * 2
+        const cols = Math.ceil(canvas.width / padding) + 1
+        const rows = Math.ceil(canvas.height / padding) + 1
+
+        for (let i = 0; i < cols; i++) {
+            for (let j = 0; j < rows; j++) {
+                ctx.save()
+                ctx.translate(i * padding + padding / 2, j * padding + padding / 2)
+                ctx.rotate((rotation * Math.PI) / 180)
+                ctx.fillText(text, 0, 0)
+                ctx.restore()
+            }
+        }
+    } else {
+        // 单个水印
+        const positions = {
+            'top-left': { x: textWidth / 2 + 20, y: textHeight / 2 + 20 },
+            'top-center': { x: canvas.width / 2, y: textHeight / 2 + 20 },
+            'top-right': { x: canvas.width - textWidth / 2 - 20, y: textHeight / 2 + 20 },
+            'center-left': { x: textWidth / 2 + 20, y: canvas.height / 2 },
+            'center': { x: canvas.width / 2, y: canvas.height / 2 },
+            'center-right': { x: canvas.width - textWidth / 2 - 20, y: canvas.height / 2 },
+            'bottom-left': { x: textWidth / 2 + 20, y: canvas.height - textHeight / 2 - 20 },
+            'bottom-center': { x: canvas.width / 2, y: canvas.height - textHeight / 2 - 20 },
+            'bottom-right': { x: canvas.width - textWidth / 2 - 20, y: canvas.height - textHeight / 2 - 20 }
+        }
+
+        const pos = positions[position]
+        ctx.save()
+        ctx.translate(pos.x, pos.y)
+        ctx.rotate((rotation * Math.PI) / 180)
+        ctx.fillText(text, 0, 0)
+        ctx.restore()
+    }
+
+    ctx.restore()
+}
+
+const addImageWatermark = async (ctx, canvas) => {
+    const { fontSize, opacity, rotation, position, tile } = settings.value
+    const img = watermarkImage.value
+
+    if (!img) return
+
+    ctx.save()
+    ctx.globalAlpha = opacity / 100
+
+    const scale = fontSize / 100
+    const wmWidth = img.naturalWidth * scale
+    const wmHeight = img.naturalHeight * scale
+
+    if (tile) {
+        const padding = Math.max(wmWidth, wmHeight) * 1.5
+        const cols = Math.ceil(canvas.width / padding) + 1
+        const rows = Math.ceil(canvas.height / padding) + 1
+
+        for (let i = 0; i < cols; i++) {
+            for (let j = 0; j < rows; j++) {
+                ctx.save()
+                ctx.translate(i * padding + padding / 2, j * padding + padding / 2)
+                ctx.rotate((rotation * Math.PI) / 180)
+                ctx.drawImage(img, -wmWidth / 2, -wmHeight / 2, wmWidth, wmHeight)
+                ctx.restore()
+            }
+        }
+    } else {
+        const positions = {
+            'top-left': { x: wmWidth / 2 + 20, y: wmHeight / 2 + 20 },
+            'top-center': { x: canvas.width / 2, y: wmHeight / 2 + 20 },
+            'top-right': { x: canvas.width - wmWidth / 2 - 20, y: wmHeight / 2 + 20 },
+            'center-left': { x: wmWidth / 2 + 20, y: canvas.height / 2 },
+            'center': { x: canvas.width / 2, y: canvas.height / 2 },
+            'center-right': { x: canvas.width - wmWidth / 2 - 20, y: canvas.height / 2 },
+            'bottom-left': { x: wmWidth / 2 + 20, y: canvas.height - wmHeight / 2 - 20 },
+            'bottom-center': { x: canvas.width / 2, y: canvas.height - wmHeight / 2 - 20 },
+            'bottom-right': { x: canvas.width - wmWidth / 2 - 20, y: canvas.height - wmHeight / 2 - 20 }
+        }
+
+        const pos = positions[position]
+        ctx.save()
+        ctx.translate(pos.x, pos.y)
+        ctx.rotate((rotation * Math.PI) / 180)
+        ctx.drawImage(img, -wmWidth / 2, -wmHeight / 2, wmWidth, wmHeight)
+        ctx.restore()
+    }
+
+    ctx.restore()
 }
 </script>
 
@@ -479,7 +746,11 @@ const handleAddWatermark = async () => {
 }
 
 .file-item:hover {
-    background-color: var(--n-color-target, rgba(24, 160, 88, 0.1));
+    background-color: var(--n-hover-color, rgba(255, 255, 255, 0.05));
+}
+
+.file-item:hover .file-remove {
+    color: var(--n-text-color);
 }
 
 .file-thumb {
@@ -529,11 +800,51 @@ const handleAddWatermark = async () => {
 .file-remove {
     flex-shrink: 0;
     padding: 2px !important;
+    color: var(--n-text-color-3);
+}
+
+.file-remove:hover {
+    color: var(--n-error-color) !important;
 }
 
 .footer-actions {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.result-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 12px;
+    background-color: var(--n-color-modal);
+    border: 1px solid var(--n-border-color);
+    border-radius: 4px;
+}
+
+.result-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--n-text-color-2);
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--n-text-color);
+}
+
+.result-buttons {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
 }
 </style>
