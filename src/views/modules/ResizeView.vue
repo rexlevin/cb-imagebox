@@ -166,9 +166,42 @@
             <!-- 底部操作 -->
             <template #footer v-if="files.length > 0">
                 <div class="footer-actions">
-                    <n-button type="primary" :loading="processing" block @click="handleResize">
+                    <n-button
+                        v-if="!hasResult"
+                        type="primary"
+                        :loading="processing"
+                        block
+                        @click="handleResize"
+                    >
                         开始调整 ({{ files.length }})
                     </n-button>
+
+                    <div v-if="hasResult" class="result-summary">
+                        <div class="result-stat">
+                            <span class="stat-label">成功:</span>
+                            <span class="stat-value">{{ files.filter(f => f.status === 'done').length }}/{{ files.length }}</span>
+                        </div>
+                        <div class="result-buttons">
+                            <n-button type="primary" size="small" @click="downloadAll">
+                                <template #icon>
+                                    <n-icon :size="14"><DownloadIcon /></n-icon>
+                                </template>
+                                下载全部
+                            </n-button>
+                            <n-button size="small" @click="continueAdd">
+                                <template #icon>
+                                    <n-icon :size="14"><UploadIcon /></n-icon>
+                                </template>
+                                继续
+                            </n-button>
+                            <n-button size="small" @click="reset">
+                                <template #icon>
+                                    <n-icon :size="14"><TrashIcon /></n-icon>
+                                </template>
+                                重置
+                            </n-button>
+                        </div>
+                    </div>
                 </div>
             </template>
         </n-card>
@@ -178,13 +211,14 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useMessage } from 'naive-ui'
-import { Upload, Paste, Delete, Image, Close } from '@vicons/carbon'
+import { Upload, Paste, Delete, Image, Close, Download } from '@vicons/carbon'
 
 const UploadIcon = Upload
 const PasteIcon = Paste
 const TrashIcon = Delete
 const ImageIcon = Image
 const CloseIcon = Close
+const DownloadIcon = Download
 
 const settings = ref({
     mode: 'dimensions',
@@ -305,16 +339,142 @@ const handleClear = () => {
     message.info('已清空')
 }
 
+const hasResult = computed(() => {
+    return files.value.some(f => f.status === 'done')
+})
+
 const handleResize = async () => {
     if (files.value.length === 0) {
         message.warning('请先添加图片')
         return
     }
     processing.value = true
-    setTimeout(() => {
+
+    try {
+        for (const file of files.value) {
+            file.status = 'processing'
+
+            try {
+                // 读取原图
+                const originalImage = new window.Image()
+                await new Promise((resolve, reject) => {
+                    originalImage.onload = resolve
+                    originalImage.onerror = reject
+                    originalImage.src = file.preview
+                })
+
+                const { mode, width, height, quality, keepRatio } = settings.value
+                let targetWidth = width
+                let targetHeight = height
+
+                // 计算目标尺寸
+                if (mode === 'percentage') {
+                    targetWidth = Math.round(originalImage.naturalWidth * (width / 100))
+                    targetHeight = Math.round(originalImage.naturalHeight * (width / 100))
+                } else if (mode === 'max') {
+                    const ratio = Math.min(width / originalImage.naturalWidth, height / originalImage.naturalHeight)
+                    if (ratio < 1) {
+                        targetWidth = Math.round(originalImage.naturalWidth * ratio)
+                        targetHeight = Math.round(originalImage.naturalHeight * ratio)
+                    } else {
+                        targetWidth = originalImage.naturalWidth
+                        targetHeight = originalImage.naturalHeight
+                    }
+                } else if (mode === 'dimensions' && keepRatio) {
+                    // 按比例缩放
+                    const imgRatio = originalImage.naturalWidth / originalImage.naturalHeight
+                    if (width && !height) {
+                        targetHeight = Math.round(width / imgRatio)
+                    } else if (!width && height) {
+                        targetWidth = Math.round(height * imgRatio)
+                    } else if (width && height) {
+                        const targetRatio = width / height
+                        if (imgRatio > targetRatio) {
+                            targetHeight = Math.round(width / imgRatio)
+                        } else {
+                            targetWidth = Math.round(height * imgRatio)
+                        }
+                    }
+                }
+
+                // 创建 Canvas
+                const canvas = document.createElement('canvas')
+                canvas.width = targetWidth
+                canvas.height = targetHeight
+                const ctx = canvas.getContext('2d')
+
+                // 使用高质量缩放
+                ctx.imageSmoothingEnabled = true
+                ctx.imageSmoothingQuality = 'high'
+
+                // 绘制缩放后的图片
+                ctx.drawImage(originalImage, 0, 0, targetWidth, targetHeight)
+
+                // 生成结果
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(resolve, 'image/jpeg', quality / 100)
+                })
+
+                file.result = {
+                    blob,
+                    originalSize: file.size,
+                    newSize: blob.size,
+                    originalWidth: originalImage.naturalWidth,
+                    originalHeight: originalImage.naturalHeight,
+                    newWidth: targetWidth,
+                    newHeight: targetHeight,
+                    url: URL.createObjectURL(blob)
+                }
+                file.status = 'done'
+
+                // 释放原图预览
+                if (file.preview !== URL.createObjectURL(file.file)) {
+                    URL.revokeObjectURL(file.preview)
+                }
+            } catch (err) {
+                console.error('调整失败:', err)
+                file.status = 'error'
+            }
+        }
+
+        message.success(`成功调整 ${files.value.filter(f => f.status === 'done').length}/${files.value.length} 张图片`)
+    } catch (error) {
+        console.error('调整失败:', error)
+        message.error('调整失败')
+    } finally {
         processing.value = false
-        message.success('调整完成')
-    }, 2000)
+    }
+}
+
+const downloadAll = () => {
+    files.value.forEach((file) => {
+        if (file.result) {
+            const link = document.createElement('a')
+            link.href = file.result.url
+            const ext = file.name.split('.').pop().toLowerCase()
+            link.download = `${file.name.split('.')[0]}_resized.${ext}`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+        }
+    })
+    message.success('下载已开始')
+}
+
+const continueAdd = () => {
+    message.info('请继续添加图片')
+}
+
+const reset = () => {
+    files.value.forEach(f => {
+        if (f.preview) URL.revokeObjectURL(f.preview)
+        if (f.result?.url) URL.revokeObjectURL(f.result.url)
+    })
+    files.value = []
+    if (uploadRef.value) {
+        uploadRef.value.clear()
+    }
+    message.info('已重置')
 }
 </script>
 
@@ -478,5 +638,40 @@ const handleResize = async () => {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.result-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 12px;
+    background-color: var(--n-color-modal);
+    border: 1px solid var(--n-border-color);
+    border-radius: 4px;
+}
+
+.result-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--n-text-color-2);
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--n-text-color);
+}
+
+.result-buttons {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
 }
 </style>
