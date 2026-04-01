@@ -131,9 +131,42 @@
             <!-- 底部操作 -->
             <template #footer v-if="files.length > 0">
                 <div class="footer-actions">
-                    <n-button type="primary" :loading="processing" block @click="handleConvert">
+                    <n-button
+                        v-if="!hasResult"
+                        type="primary"
+                        :loading="processing"
+                        block
+                        @click="handleConvert"
+                    >
                         开始转换 ({{ files.length }})
                     </n-button>
+
+                    <div v-if="hasResult" class="result-summary">
+                        <div class="result-stat">
+                            <span class="stat-label">成功:</span>
+                            <span class="stat-value">{{ files.filter(f => f.status === 'done').length }}/{{ files.length }}</span>
+                        </div>
+                        <div class="result-buttons">
+                            <n-button type="primary" size="small" @click="downloadAll">
+                                <template #icon>
+                                    <n-icon :size="14"><DownloadIcon /></n-icon>
+                                </template>
+                                下载全部
+                            </n-button>
+                            <n-button size="small" @click="continueAdd">
+                                <template #icon>
+                                    <n-icon :size="14"><UploadIcon /></n-icon>
+                                </template>
+                                继续
+                            </n-button>
+                            <n-button size="small" @click="reset">
+                                <template #icon>
+                                    <n-icon :size="14"><TrashIcon /></n-icon>
+                                </template>
+                                重置
+                            </n-button>
+                        </div>
+                    </div>
                 </div>
             </template>
         </n-card>
@@ -141,15 +174,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useMessage } from 'naive-ui'
-import { Upload, Paste, Delete, Image, Close } from '@vicons/carbon'
+import { Upload, Paste, Delete, Image, Close, Download } from '@vicons/carbon'
 
 const UploadIcon = Upload
 const PasteIcon = Paste
 const TrashIcon = Delete
 const ImageIcon = Image
 const CloseIcon = Close
+const DownloadIcon = Download
 
 const settings = ref({
     format: 'jpeg',
@@ -247,16 +281,127 @@ const handleClear = () => {
     message.info('已清空')
 }
 
+const hasResult = computed(() => {
+    return files.value.some(f => f.status === 'done')
+})
+
 const handleConvert = async () => {
     if (files.value.length === 0) {
         message.warning('请先添加图片')
         return
     }
     processing.value = true
-    setTimeout(() => {
+
+    try {
+        for (const file of files.value) {
+            file.status = 'processing'
+
+            try {
+                // 读取原图
+                const originalImage = new window.Image()
+                await new Promise((resolve, reject) => {
+                    originalImage.onload = resolve
+                    originalImage.onerror = reject
+                    originalImage.src = file.preview
+                })
+
+                // 创建 Canvas
+                const canvas = document.createElement('canvas')
+                canvas.width = originalImage.naturalWidth
+                canvas.height = originalImage.naturalHeight
+                const ctx = canvas.getContext('2d')
+
+                // 根据设置绘制
+                const { format, quality, keepTransparency } = settings.value
+
+                if (format === 'png' && keepTransparency) {
+                    // PNG 保留透明背景
+                    ctx.clearRect(0, 0, canvas.width, canvas.height)
+                } else if (format === 'webp' && keepTransparency) {
+                    // WebP 保留透明背景
+                    ctx.clearRect(0, 0, canvas.width, canvas.height)
+                } else if (format === 'png' || format === 'webp' || format === 'gif') {
+                    // 默认保留透明
+                    ctx.clearRect(0, 0, canvas.width, canvas.height)
+                }
+
+                // 绘制图片
+                ctx.drawImage(originalImage, 0, 0)
+
+                // 确定输出格式和 MIME 类型
+                const formatMap = {
+                    'jpeg': 'image/jpeg',
+                    'jpg': 'image/jpeg',
+                    'png': 'image/png',
+                    'webp': 'image/webp',
+                    'gif': 'image/gif',
+                    'bmp': 'image/bmp',
+                    'tiff': 'image/tiff'
+                }
+
+                const mimeType = formatMap[format] || 'image/png'
+                const outputQuality = quality / 100
+
+                // 生成结果
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(resolve, mimeType, outputQuality)
+                })
+
+                file.result = {
+                    blob,
+                    size: blob.size,
+                    url: URL.createObjectURL(blob)
+                }
+                file.status = 'done'
+
+                // 释放原图预览
+                if (file.preview !== URL.createObjectURL(file.file)) {
+                    URL.revokeObjectURL(file.preview)
+                }
+            } catch (err) {
+                console.error('转换失败:', err)
+                file.status = 'error'
+            }
+        }
+
+        message.success(`成功转换 ${files.value.filter(f => f.status === 'done').length}/${files.value.length} 张图片`)
+    } catch (error) {
+        console.error('转换失败:', error)
+        message.error('转换失败')
+    } finally {
         processing.value = false
-        message.success('转换完成')
-    }, 2000)
+    }
+}
+
+const downloadAll = () => {
+    files.value.forEach((file) => {
+        if (file.result) {
+            const link = document.createElement('a')
+            link.href = file.result.url
+            const ext = settings.value.format
+            link.download = `${file.name.split('.')[0]}.${ext}`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+        }
+    })
+    message.success('下载已开始')
+}
+
+const continueAdd = () => {
+    message.info('请继续添加图片')
+}
+
+const reset = () => {
+    files.value.forEach(f => {
+        if (f.preview) URL.revokeObjectURL(f.preview)
+        if (f.result?.url) URL.revokeObjectURL(f.result.url)
+    })
+    files.value = []
+    if (uploadRef.value) {
+        uploadRef.value.clear()
+    }
+    message.info('已重置')
 }
 </script>
 
@@ -334,9 +479,9 @@ const handleConvert = async () => {
 }
 
 .format-item.active {
-    background-color: var(--n-primary-color);
+    background-color: var(--n-color-target, rgba(24, 160, 88, 0.1));
     border-color: var(--n-primary-color);
-    color: white;
+    color: var(--n-primary-color) !important;
 }
 
 .format-name {
@@ -451,5 +596,40 @@ const handleConvert = async () => {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.result-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 12px;
+    background-color: var(--n-color-modal);
+    border: 1px solid var(--n-border-color);
+    border-radius: 4px;
+}
+
+.result-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--n-text-color-2);
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--n-text-color);
+}
+
+.result-buttons {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
 }
 </style>

@@ -234,12 +234,12 @@
                                 </template>
                                 继续
                             </n-button>
-                            <n-button size="small" @click="reset">
-                                <template #icon>
-                                    <n-icon :size="14"><DeleteIcon /></n-icon>
-                                </template>
-                                重置
-                            </n-button>
+                    <n-button size="small" @click="reset">
+                        <template #icon>
+                            <n-icon :size="14"><TrashIcon /></n-icon>
+                        </template>
+                        重置
+                    </n-button>
                         </div>
                     </div>
                 </div>
