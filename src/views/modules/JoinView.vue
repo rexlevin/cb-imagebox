@@ -824,6 +824,11 @@ const downloadResult = () => {
 }
 
 const continueAdd = () => {
+    // 清空拼接结果，但保留图片列表
+    if (joinedResult.value?.url) {
+        URL.revokeObjectURL(joinedResult.value.url)
+    }
+    joinedResult.value = null
     message.info('请继续添加图片')
 }
 

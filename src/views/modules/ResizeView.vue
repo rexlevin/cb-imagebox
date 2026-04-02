@@ -427,10 +427,10 @@ const handleResize = async () => {
                 }
                 file.status = 'done'
 
-                // 释放原图预览
-                if (file.preview !== URL.createObjectURL(file.file)) {
-                    URL.revokeObjectURL(file.preview)
-                }
+                // 不释放原图预览，以便后续可以继续使用
+                // if (file.preview !== URL.createObjectURL(file.file)) {
+                //     URL.revokeObjectURL(file.preview)
+                // }
             } catch (err) {
                 console.error('调整失败:', err)
                 file.status = 'error'
@@ -462,6 +462,12 @@ const downloadAll = () => {
 }
 
 const continueAdd = () => {
+    // 清空已处理结果，但保留图片文件和预览
+    files.value.forEach(f => {
+        if (f.result?.url) URL.revokeObjectURL(f.result.url)
+        f.status = 'pending'
+        f.result = null
+    })
     message.info('请继续添加图片')
 }
 
