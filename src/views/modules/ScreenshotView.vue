@@ -311,10 +311,216 @@ const handleExport = async () => {
         return
     }
     processing.value = true
-    setTimeout(() => {
+
+    try {
+        for (const file of files.value) {
+            try {
+                // 读取原图
+                const originalImage = new window.Image()
+                await new Promise((resolve, reject) => {
+                    originalImage.onload = resolve
+                    originalImage.onerror = reject
+                    originalImage.src = file.preview
+                })
+
+                const { device, backgroundType, gradient, solidColor, padding, borderRadius, shadow, addCaption, caption } = settings.value
+
+                // 创建 Canvas
+                const canvas = document.createElement('canvas')
+                const ctx = canvas.getContext('2d')
+
+                // 计算总尺寸
+                const totalPadding = padding * 2
+                let totalWidth, totalHeight
+
+                // 绘制背景
+                if (backgroundType === 'gradient') {
+                    const gradients = {
+                        'purple-blue': ['#8B5CF6', '#3B82F6'],
+                        'orange-red': ['#F97316', '#EF4444'],
+                        'cyan-green': ['#06B6D4', '#22C55E'],
+                        'pink-purple': ['#EC4899', '#8B5CF6'],
+                        'dark': ['#1F2937', '#111827']
+                    }
+                    const colors = gradients[gradient] || gradients['purple-blue']
+                    const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
+                    bgGradient.addColorStop(0, colors[0])
+                    bgGradient.addColorStop(1, colors[1])
+                    ctx.fillStyle = bgGradient
+                    ctx.fillRect(0, 0, canvas.width, canvas.height)
+                } else {
+                    ctx.fillStyle = solidColor
+                    ctx.fillRect(0, 0, canvas.width, canvas.height)
+                }
+
+                // 绘制阴影
+                if (shadow > 0) {
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'
+                    ctx.shadowBlur = shadow
+                    ctx.shadowOffsetX = 0
+                    ctx.shadowOffsetY = shadow / 2
+                }
+
+                // 绘制圆角矩形背景（图片容器）
+                if (device === 'none') {
+                    // 无边框模式 - 保持原图尺寸
+                    totalWidth = originalImage.naturalWidth + totalPadding
+                    totalHeight = originalImage.naturalHeight + totalPadding
+                    canvas.width = totalWidth
+                    canvas.height = totalHeight
+
+                    // 重新绘制背景（因为画布尺寸改变了）
+                    if (backgroundType === 'gradient') {
+                        const gradients = {
+                            'purple-blue': ['#8B5CF6', '#3B82F6'],
+                            'orange-red': ['#F97316', '#EF4444'],
+                            'cyan-green': ['#06B6D4', '#22C55E'],
+                            'pink-purple': ['#EC4899', '#8B5CF6'],
+                            'dark': ['#1F2937', '#111827']
+                        }
+                        const colors = gradients[gradient] || gradients['purple-blue']
+                        const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
+                        bgGradient.addColorStop(0, colors[0])
+                        bgGradient.addColorStop(1, colors[1])
+                        ctx.fillStyle = bgGradient
+                        ctx.fillRect(0, 0, canvas.width, canvas.height)
+                    } else {
+                        ctx.fillStyle = solidColor
+                        ctx.fillRect(0, 0, canvas.width, canvas.height)
+                    }
+
+                    ctx.fillStyle = '#ffffff'
+                    roundRect(ctx, padding, padding, originalImage.naturalWidth, originalImage.naturalHeight, borderRadius)
+                    ctx.fill()
+                    ctx.shadowColor = 'transparent'
+                } else {
+                    // 有设备边框 - 先适配图片到设备屏幕尺寸
+                    const deviceSpecs = {
+                        'iphone-15-pro': { screenWidth: 393, screenHeight: 852, frameWidth: 430, frameHeight: 932, border: 12 },
+                        'android': { screenWidth: 412, screenHeight: 915, frameWidth: 450, frameHeight: 980, border: 14 },
+                        'macbook': { screenWidth: 1440, screenHeight: 900, frameWidth: 1550, frameHeight: 1020, border: 16 },
+                        'imac': { screenWidth: 1920, screenHeight: 1080, frameWidth: 2050, frameHeight: 1200, border: 18 },
+                        'ipad': { screenWidth: 1024, screenHeight: 1366, frameWidth: 1080, frameHeight: 1420, border: 12 }
+                    }
+                    const spec = deviceSpecs[device] || deviceSpecs['iphone-15-pro']
+
+                    // 计算总尺寸
+                    totalWidth = spec.frameWidth + totalPadding
+                    totalHeight = spec.frameHeight + totalPadding
+
+                    // 重新设置画布尺寸
+                    canvas.width = totalWidth
+                    canvas.height = totalHeight
+
+                    // 重新绘制背景
+                    if (backgroundType === 'gradient') {
+                        const gradients = {
+                            'purple-blue': ['#8B5CF6', '#3B82F6'],
+                            'orange-red': ['#F97316', '#EF4444'],
+                            'cyan-green': ['#06B6D4', '#22C55E'],
+                            'pink-purple': ['#EC4899', '#8B5CF6'],
+                            'dark': ['#1F2937', '#111827']
+                        }
+                        const colors = gradients[gradient] || gradients['purple-blue']
+                        const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
+                        bgGradient.addColorStop(0, colors[0])
+                        bgGradient.addColorStop(1, colors[1])
+                        ctx.fillStyle = bgGradient
+                        ctx.fillRect(0, 0, canvas.width, canvas.height)
+                    } else {
+                        ctx.fillStyle = solidColor
+                        ctx.fillRect(0, 0, canvas.width, canvas.height)
+                    }
+
+                    // 绘制设备边框
+                    const frameX = (canvas.width - spec.frameWidth) / 2
+                    const frameY = (canvas.height - spec.frameHeight) / 2
+
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'
+                    ctx.shadowBlur = shadow
+                    ctx.shadowOffsetX = 0
+                    ctx.shadowOffsetY = shadow / 2
+
+                    ctx.fillStyle = '#1a1a1a'
+                    roundRect(ctx, frameX, frameY, spec.frameWidth, spec.frameHeight, spec.border)
+                    ctx.fill()
+                    ctx.shadowColor = 'transparent'
+
+                    // 绘制屏幕区域
+                    ctx.fillStyle = '#000000'
+                    const screenX = frameX + spec.border
+                    const screenY = frameY + spec.border
+                    const screenWidth = spec.frameWidth - spec.border * 2
+                    const screenHeight = spec.frameHeight - spec.border * 2
+                    roundRect(ctx, screenX, screenY, screenWidth, screenHeight, 4)
+                    ctx.fill()
+
+                    // 将图片缩放到屏幕尺寸并绘制
+                    ctx.drawImage(
+                        originalImage,
+                        screenX,
+                        screenY,
+                        screenWidth,
+                        screenHeight
+                    )
+                }
+
+                // 绘制图片（无边框模式）
+                if (device === 'none') {
+                    ctx.drawImage(originalImage, padding, padding, originalImage.naturalWidth, originalImage.naturalHeight)
+                }
+
+                // 绘制说明文字
+                if (addCaption && caption) {
+                    ctx.shadowColor = 'transparent'
+                    ctx.fillStyle = '#ffffff'
+                    ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                    ctx.textAlign = 'center'
+                    ctx.textBaseline = 'bottom'
+                    ctx.fillText(caption, canvas.width / 2, canvas.height - 20)
+                }
+
+                // 生成结果
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(resolve, 'image/png', 0.95)
+                })
+
+                // 下载图片
+                const link = document.createElement('a')
+                link.href = URL.createObjectURL(blob)
+                link.download = `screenshot_${Date.now()}.png`
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+
+            } catch (err) {
+                console.error('导出失败:', err)
+                message.error(`导出 ${file.name} 失败`)
+            }
+        }
+
+        message.success(`成功导出 ${files.value.length} 张图片`)
+    } catch (error) {
+        console.error('导出失败:', error)
+        message.error('导出失败')
+    } finally {
         processing.value = false
-        message.success('导出完成')
-    }, 2000)
+    }
+}
+
+// 辅助函数：绘制圆角矩形
+function roundRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath()
+    ctx.moveTo(x + radius, y)
+    ctx.lineTo(x + width - radius, y)
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius)
+    ctx.lineTo(x + width, y + height - radius)
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height)
+    ctx.lineTo(x + radius, y + height)
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius)
+    ctx.lineTo(x, y + radius)
+    ctx.quadraticCurveTo(x, y, x + radius, y)
+    ctx.closePath()
 }
 </script>
 
@@ -386,9 +592,9 @@ const handleExport = async () => {
 }
 
 .device-item.active {
-    background-color: var(--n-primary-color);
+    background-color: var(--n-color-target, rgba(24, 160, 88, 0.1));
     border-color: var(--n-primary-color);
-    color: white;
+    color: var(--n-primary-color) !important;
 }
 
 .device-name {
