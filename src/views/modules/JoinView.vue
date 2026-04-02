@@ -121,6 +121,7 @@
                 <div class="header-actions">
                     <n-upload
                         ref="uploadRef"
+                        :file-list="uploadFileList"
                         :show-file-list="false"
                         accept="image/*"
                         multiple
@@ -237,6 +238,7 @@
             <template #footer v-if="images.length > 0">
                 <div class="footer-actions">
                     <n-button
+                        v-if="!joinedResult"
                         type="primary"
                         :loading="processing"
                         block
@@ -244,6 +246,33 @@
                     >
                         开始拼接 ({{ images.length }}张)
                     </n-button>
+
+                    <div v-if="joinedResult" class="result-summary">
+                        <div class="result-stat">
+                            <span class="stat-label">尺寸:</span>
+                            <span class="stat-value">{{ joinedResult.width }}×{{ joinedResult.height }}</span>
+                        </div>
+                        <div class="result-buttons">
+                            <n-button type="primary" size="small" @click="downloadResult">
+                                <template #icon>
+                                    <n-icon :size="14"><DownloadIcon /></n-icon>
+                                </template>
+                                下载
+                            </n-button>
+                            <n-button size="small" @click="continueAdd">
+                                <template #icon>
+                                    <n-icon :size="14"><UploadIcon /></n-icon>
+                                </template>
+                                继续
+                            </n-button>
+                            <n-button size="small" @click="reset">
+                                <template #icon>
+                                    <n-icon :size="14"><TrashIcon /></n-icon>
+                                </template>
+                                重置
+                            </n-button>
+                        </div>
+                    </div>
                 </div>
             </template>
         </n-card>
@@ -253,7 +282,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useMessage } from 'naive-ui'
-import { Upload, Paste, Delete, Image, Close, ChevronUp, ChevronDown } from '@vicons/carbon'
+import { Upload, Paste, Delete, Image, Close, ChevronUp, ChevronDown, Download } from '@vicons/carbon'
 
 const UploadIcon = Upload
 const PasteIcon = Paste
@@ -262,6 +291,7 @@ const ImageIcon = Image
 const CloseIcon = Close
 const ChevronUpIcon = ChevronUp
 const ChevronDownIcon = ChevronDown
+const DownloadIcon = Download
 
 const settings = ref({
     direction: 'vertical',
@@ -291,6 +321,8 @@ const alignmentOptions = computed(() => {
 })
 
 const images = ref([])
+const uploadFileList = ref([])
+const joinedResult = ref(null)
 const processing = ref(false)
 const isDragging = ref(false)
 const dragIndex = ref(null)
@@ -307,7 +339,15 @@ const formatSize = (bytes) => {
 
 const handleFileChange = (fileList) => {
     const uploadedFiles = Array.isArray(fileList) ? fileList : []
-    const newImages = uploadedFiles.map(file => ({
+
+    // 只添加新文件（不在当前列表中的）
+    const existingFileNames = new Set(images.value.map(img => img.name + '_' + img.size))
+    const newFiles = uploadedFiles.filter(file => {
+        const key = file.name + '_' + (file.file?.size || 0)
+        return !existingFileNames.has(key)
+    })
+
+    const newImages = newFiles.map(file => ({
         id: Date.now() + Math.random(),
         name: file.name,
         size: file.file?.size || 0,
@@ -316,19 +356,26 @@ const handleFileChange = (fileList) => {
         height: 0,
         file: file.file
     }))
-    images.value = [...images.value, ...newImages]
 
-    // 读取图片尺寸
-    newImages.forEach(img => {
-        if (img.file) {
-            const image = new Image()
-            image.onload = () => {
-                img.width = image.naturalWidth
-                img.height = image.naturalHeight
+    if (newImages.length > 0) {
+        images.value = [...images.value, ...newImages]
+        uploadFileList.value = uploadedFiles
+
+        // 读取图片尺寸
+        newImages.forEach(img => {
+            if (img.file) {
+                const image = new window.Image()
+                image.onload = () => {
+                    img.width = image.naturalWidth
+                    img.height = image.naturalHeight
+                }
+                image.onerror = () => {
+                    console.error('Failed to load image:', img.name)
+                }
+                image.src = img.preview
             }
-            image.src = img.preview
-        }
-    })
+        })
+    }
 }
 
 const handlePaste = async () => {
@@ -366,11 +413,11 @@ const handleRemove = (id) => {
         URL.revokeObjectURL(imageToRemove.preview)
     }
     images.value = images.value.filter(img => img.id !== id)
-    if (images.value.length === 0) {
-        if (uploadRef.value) {
-            uploadRef.value.clear()
-        }
-    }
+    // 同步更新上传组件的文件列表
+    uploadFileList.value = uploadFileList.value.filter(file => {
+        const key = file.name + '_' + (file.file?.size || 0)
+        return key !== imageToRemove.name + '_' + imageToRemove.size
+    })
 }
 
 const handleClear = () => {
@@ -378,9 +425,7 @@ const handleClear = () => {
         if (img.preview) URL.revokeObjectURL(img.preview)
     })
     images.value = []
-    if (uploadRef.value) {
-        uploadRef.value.clear()
-    }
+    uploadFileList.value = []
     message.info('已清空')
 }
 
@@ -532,14 +577,267 @@ const handleJoin = async () => {
 
     processing.value = true
     try {
-        // TODO: 实现实际的拼接逻辑
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        const { direction, spacing, backgroundColor, borderRadius, sizeStrategy, alignment, outputFormat, outputQuality } = settings.value
+
+        // 加载所有图片
+        const loadedImages = await Promise.all(
+            images.value.map(async (img) => {
+                return new Promise((resolve, reject) => {
+                    const image = new window.Image()
+                    image.onload = () => resolve({
+                        image,
+                        width: img.width,
+                        height: img.height,
+                        name: img.name
+                    })
+                    image.onerror = reject
+                    image.src = img.preview
+                })
+            })
+        )
+
+        // 统一尺寸
+        const unifiedImages = applySizeStrategy(loadedImages, sizeStrategy)
+
+        // 计算总尺寸
+        let totalWidth, totalHeight
+        if (direction === 'horizontal') {
+            totalWidth = unifiedImages.reduce((sum, img, idx) => sum + img.width + (idx < unifiedImages.length - 1 ? spacing : 0), 0)
+            totalHeight = Math.max(...unifiedImages.map(img => img.height))
+        } else if (direction === 'vertical') {
+            totalWidth = Math.max(...unifiedImages.map(img => img.width))
+            totalHeight = unifiedImages.reduce((sum, img, idx) => sum + img.height + (idx < unifiedImages.length - 1 ? spacing : 0), 0)
+        } else if (direction === 'grid') {
+            const cols = settings.value.columns
+            const rows = Math.ceil(unifiedImages.length / cols)
+            const colWidths = []
+            const rowHeights = []
+
+            for (let col = 0; col < cols; col++) {
+                colWidths.push(Math.max(
+                    ...unifiedImages
+                        .filter((_, idx) => idx % cols === col)
+                        .map(img => img.width)
+                ))
+            }
+            for (let row = 0; row < rows; row++) {
+                rowHeights.push(Math.max(
+                    ...unifiedImages
+                        .slice(row * cols, (row + 1) * cols)
+                        .map(img => img.height)
+                ))
+            }
+            totalWidth = colWidths.reduce((sum, w) => sum + w + spacing, 0) - spacing
+            totalHeight = rowHeights.reduce((sum, h) => sum + h + spacing, 0) - spacing
+        }
+
+        // 创建画布
+        const canvas = document.createElement('canvas')
+        canvas.width = totalWidth
+        canvas.height = totalHeight
+        const ctx = canvas.getContext('2d')
+
+        // 绘制背景
+        ctx.fillStyle = backgroundColor
+        ctx.fillRect(0, 0, totalWidth, totalHeight)
+
+        // 绘制图片
+        if (direction === 'horizontal') {
+            let x = 0
+            const maxHeight = Math.max(...unifiedImages.map(img => img.height))
+            unifiedImages.forEach(img => {
+                let y = 0
+                if (alignment === 'center') y = (maxHeight - img.height) / 2
+                else if (alignment === 'end') y = maxHeight - img.height
+
+                ctx.drawImage(img.image, x, y, img.width, img.height)
+                x += img.width + spacing
+            })
+        } else if (direction === 'vertical') {
+            let y = 0
+            const maxWidth = Math.max(...unifiedImages.map(img => img.width))
+            unifiedImages.forEach(img => {
+                let x = 0
+                if (alignment === 'center') x = (maxWidth - img.width) / 2
+                else if (alignment === 'end') x = maxWidth - img.width
+
+                ctx.drawImage(img.image, x, y, img.width, img.height)
+                y += img.height + spacing
+            })
+        } else if (direction === 'grid') {
+            const cols = settings.value.columns
+            const rows = Math.ceil(unifiedImages.length / cols)
+            const colWidths = []
+            const rowHeights = []
+
+            for (let col = 0; col < cols; col++) {
+                colWidths.push(Math.max(
+                    ...unifiedImages
+                        .filter((_, idx) => idx % cols === col)
+                        .map(img => img.width)
+                ))
+            }
+            for (let row = 0; row < rows; row++) {
+                rowHeights.push(Math.max(
+                    ...unifiedImages
+                        .slice(row * cols, (row + 1) * cols)
+                        .map(img => img.height)
+                ))
+            }
+
+            let y = 0
+            for (let row = 0; row < rows; row++) {
+                let x = 0
+                for (let col = 0; col < cols; col++) {
+                    const idx = row * cols + col
+                    if (idx < unifiedImages.length) {
+                        const img = unifiedImages[idx]
+                        let imgX = x, imgY = y
+
+                        // 水平对齐
+                        if (alignment === 'center') imgX = x + (colWidths[col] - img.width) / 2
+                        else if (alignment === 'end') imgX = x + colWidths[col] - img.width
+
+                        // 垂直对齐
+                        if (alignment === 'center') imgY = y + (rowHeights[row] - img.height) / 2
+                        else if (alignment === 'end') imgY = y + rowHeights[row] - img.height
+
+                        ctx.drawImage(img.image, imgX, imgY, img.width, img.height)
+                    }
+                    x += colWidths[col] + spacing
+                }
+                y += rowHeights[row] + spacing
+            }
+        }
+
+        // 绘制圆角
+        if (borderRadius > 0) {
+            const maskCanvas = document.createElement('canvas')
+            maskCanvas.width = totalWidth
+            maskCanvas.height = totalHeight
+            const maskCtx = maskCanvas.getContext('2d')
+
+            maskCtx.fillStyle = '#000000'
+            roundRect(maskCtx, 0, 0, totalWidth, totalHeight, borderRadius)
+            maskCtx.fill()
+
+            // 应用遮罩
+            const imageData = ctx.getImageData(0, 0, totalWidth, totalHeight)
+            const maskData = maskCtx.getImageData(0, 0, totalWidth, totalHeight)
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                if (maskData.data[i] === 0) {
+                    imageData.data[i + 3] = 0
+                }
+            }
+            ctx.putImageData(imageData, 0, 0)
+        }
+
+        // 生成结果
+        const formatMap = {
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'webp': 'image/webp'
+        }
+        const mimeType = formatMap[outputFormat] || 'image/jpeg'
+        const quality = outputQuality / 100
+
+        const blob = await new Promise(resolve => {
+            canvas.toBlob(resolve, mimeType, quality)
+        })
+
+        joinedResult.value = {
+            blob,
+            url: URL.createObjectURL(blob),
+            width: totalWidth,
+            height: totalHeight
+        }
+
         message.success('拼接完成')
     } catch (error) {
+        console.error('拼接失败:', error)
         message.error('拼接失败')
     } finally {
         processing.value = false
     }
+}
+
+const applySizeStrategy = (images, strategy) => {
+    if (strategy === 'none') return images
+
+    if (strategy === 'equalWidth') {
+        const maxWidth = Math.max(...images.map(img => img.width))
+        return images.map(img => ({
+            ...img,
+            width: maxWidth,
+            height: Math.round(img.height * (maxWidth / img.width))
+        }))
+    }
+
+    if (strategy === 'equalHeight') {
+        const maxHeight = Math.max(...images.map(img => img.height))
+        return images.map(img => ({
+            ...img,
+            width: Math.round(img.width * (maxHeight / img.height)),
+            height: maxHeight
+        }))
+    }
+
+    if (strategy === 'forceUniform') {
+        const maxWidth = Math.max(...images.map(img => img.width))
+        const maxHeight = Math.max(...images.map(img => img.height))
+        return images.map(img => ({
+            ...img,
+            width: maxWidth,
+            height: maxHeight
+        }))
+    }
+
+    return images
+}
+
+// 辅助函数：绘制圆角矩形
+function roundRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath()
+    ctx.moveTo(x + radius, y)
+    ctx.lineTo(x + width - radius, y)
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius)
+    ctx.lineTo(x + width, y + height - radius)
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height)
+    ctx.lineTo(x + radius, y + height)
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius)
+    ctx.lineTo(x, y + radius)
+    ctx.quadraticCurveTo(x, y, x + radius, y)
+    ctx.closePath()
+}
+
+const downloadResult = () => {
+    if (joinedResult.value) {
+        const link = document.createElement('a')
+        link.href = joinedResult.value.url
+        link.download = `joined_${Date.now()}.${settings.value.outputFormat}`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        message.success('下载已开始')
+    }
+}
+
+const continueAdd = () => {
+    message.info('请继续添加图片')
+}
+
+const reset = () => {
+    images.value.forEach(img => {
+        if (img.preview) URL.revokeObjectURL(img.preview)
+    })
+    if (joinedResult.value?.url) {
+        URL.revokeObjectURL(joinedResult.value.url)
+    }
+    images.value = []
+    uploadFileList.value = []
+    joinedResult.value = null
+    message.info('已重置')
 }
 </script>
 
@@ -796,5 +1094,40 @@ const handleJoin = async () => {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.result-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 12px;
+    background-color: var(--n-color-modal);
+    border: 1px solid var(--n-border-color);
+    border-radius: 4px;
+}
+
+.result-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--n-text-color-2);
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--n-text-color);
+}
+
+.result-buttons {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
 }
 </style>
