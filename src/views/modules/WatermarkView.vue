@@ -667,20 +667,25 @@ const addImageWatermark = async (ctx, canvas) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--n-input-color);
-    border: 1px solid var(--n-border-color);
+    background-color: #f0f0f0;
+    border: 2px solid #d0d0d0;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .position-item:hover {
-    background-color: var(--n-color-target);
+    background-color: #e0e0e0;
+    border-color: #c0c0c0;
 }
 
 .position-item.active {
+    background-color: rgba(24, 160, 88, 0.1);
+    border-color: #18a058 !important;
+}
+
+.position-item.active .position-dot {
     background-color: var(--n-primary-color);
-    border-color: var(--n-primary-color);
 }
 
 .position-dot {
