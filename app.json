@@ -6,7 +6,7 @@
     "author": "rexlevin",
     "repo": "https://github.com/rexlevin/cb-imagebox",
     "homepage": "https://rexlevin.github.io/canbox-pages/",
-    "main": "index.html",
+    "main": "dist/index.html",
     "logo": "logo.png",
     "version": "0.1.0",
     "window": {
