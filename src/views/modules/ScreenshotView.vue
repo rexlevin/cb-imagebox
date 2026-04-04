@@ -555,7 +555,7 @@ function roundRect(ctx, x, y, width, height, radius) {
 }
 
 .setting-label {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--n-text-color-2);
     font-weight: 500;
 }
@@ -567,7 +567,7 @@ function roundRect(ctx, x, y, width, height, radius) {
 }
 
 .input-suffix {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--n-text-color-2);
 }
 
@@ -598,7 +598,7 @@ function roundRect(ctx, x, y, width, height, radius) {
 }
 
 .device-name {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
 }
 
@@ -626,13 +626,13 @@ function roundRect(ctx, x, y, width, height, radius) {
 }
 
 .empty-text {
-    font-size: 14px;
+    font-size: 16px;
     color: var(--n-text-color);
     margin-bottom: 4px;
 }
 
 .empty-hint {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--n-text-color-2);
 }
 
@@ -680,7 +680,7 @@ function roundRect(ctx, x, y, width, height, radius) {
 }
 
 .file-name {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--n-text-color);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -689,7 +689,7 @@ function roundRect(ctx, x, y, width, height, radius) {
 }
 
 .file-meta {
-    font-size: 11px;
+    font-size: 13px;
     color: var(--n-text-color-2);
     display: flex;
     gap: 6px;

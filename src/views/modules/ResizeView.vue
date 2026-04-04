@@ -515,7 +515,7 @@ const reset = () => {
 }
 
 .setting-label {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--n-text-color-2);
     font-weight: 500;
 }
@@ -527,7 +527,7 @@ const reset = () => {
 }
 
 .input-suffix {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--n-text-color-2);
 }
 
@@ -615,7 +615,7 @@ const reset = () => {
 }
 
 .file-name {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--n-text-color);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -624,7 +624,7 @@ const reset = () => {
 }
 
 .file-meta {
-    font-size: 11px;
+    font-size: 13px;
     color: var(--n-text-color-2);
     display: flex;
     gap: 6px;
@@ -664,13 +664,13 @@ const reset = () => {
 }
 
 .stat-label {
-    font-size: 11px;
+    font-size: 13px;
     color: var(--n-text-color-2);
     margin-bottom: 2px;
 }
 
 .stat-value {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--n-text-color);
 }

@@ -9,8 +9,35 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* 桌面应用字体大小统一调整 */
+.n-button {
+    font-size: 15px !important;
+}
+
+.n-input__input-el,
+.n-input__placeholder {
+    font-size: 15px !important;
+}
+
+.n-select {
+    font-size: 15px !important;
+}
+
+.n-form-item-label {
+    font-size: 15px !important;
+}
+
+/* 统计标签字体 */
+.stat-label {
+    font-size: 13px !important;
+}
+
+.stat-value {
+    font-size: 15px !important;
 }
 
 /* 桌面应用风格调整 - 减少动画和圆角 */
@@ -40,6 +67,7 @@ body {
 .n-menu-item {
     border-radius: 4px !important;
     margin-bottom: 2px;
+    font-size: 15px !important;
 }
 
 .n-menu-item:hover {

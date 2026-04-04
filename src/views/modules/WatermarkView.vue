@@ -644,7 +644,7 @@ const addImageWatermark = async (ctx, canvas) => {
 }
 
 .setting-label {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--n-text-color-2);
     font-weight: 500;
 }
@@ -656,7 +656,7 @@ const addImageWatermark = async (ctx, canvas) => {
 }
 
 .input-suffix {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--n-text-color-2);
 }
 
@@ -800,7 +800,7 @@ const addImageWatermark = async (ctx, canvas) => {
 }
 
 .file-name {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--n-text-color);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -809,7 +809,7 @@ const addImageWatermark = async (ctx, canvas) => {
 }
 
 .file-meta {
-    font-size: 11px;
+    font-size: 13px;
     color: var(--n-text-color-2);
     display: flex;
     gap: 6px;
@@ -854,13 +854,13 @@ const addImageWatermark = async (ctx, canvas) => {
 }
 
 .stat-label {
-    font-size: 11px;
+    font-size: 13px;
     color: var(--n-text-color-2);
     margin-bottom: 2px;
 }
 
 .stat-value {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--n-text-color);
 }
