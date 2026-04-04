@@ -212,6 +212,10 @@
 </template>
 
 <script setup>
+defineOptions({
+    name: 'Compress'
+})
+
 import { ref, computed } from 'vue'
 import { useMessage } from 'naive-ui'
 import { Upload, Paste, Delete, Image, Download, Add, Renew, Close } from '@vicons/carbon'

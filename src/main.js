@@ -16,9 +16,29 @@ let currentZoomLevel = 1
 
 // 应用缩放
 const applyZoom = (zoom) => {
-    document.body.style.transform = `scale(${zoom})`
-    document.body.style.width = `${100 / zoom}%`
-    document.body.style.height = `${100 / zoom}%`
+    // 使用 transform 配合调整 body 的高度
+    const body = document.body
+    body.style.transform = `scale(${zoom})`
+    body.style.transformOrigin = 'top left'
+    // 不限制 body 宽高，让内容自然扩展
+    body.style.width = '100%'
+    body.style.height = '100%'
+    body.style.overflow = 'visible'
+
+    // 调整 html 元素，但不让它滚动
+    const html = document.documentElement
+    html.style.overflow = 'hidden'
+    html.style.width = `${100 / zoom}%`
+    html.style.height = `${100 / zoom}%`
+
+    // 动态调整 .content 的 max-height，确保缩放后能完整显示并滚动
+    setTimeout(() => {
+        const contents = document.querySelectorAll('.content')
+        contents.forEach(content => {
+            // 根据缩放比例调整 max-height
+            content.style.maxHeight = `calc(${100 / zoom}vh - ${56 / zoom}px)`
+        })
+    }, 0)
 }
 
 // 初始化缩放功能

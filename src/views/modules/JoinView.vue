@@ -280,6 +280,10 @@
 </template>
 
 <script setup>
+defineOptions({
+    name: 'Join'
+})
+
 import { ref, computed } from 'vue'
 import { useMessage } from 'naive-ui'
 import { Upload, Paste, Delete, Image, Close, ChevronUp, ChevronDown, Download } from '@vicons/carbon'

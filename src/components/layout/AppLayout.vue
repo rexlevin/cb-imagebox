@@ -47,9 +47,9 @@
             </n-layout-header>
             <n-layout-content class="content">
                 <router-view v-slot="{ Component }">
-                    <transition name="fade" mode="out-in">
+                    <keep-alive :include="['Compress', 'Watermark', 'Convert', 'Resize', 'Screenshot', 'Join', 'Workflow']">
                         <component :is="Component" />
-                    </transition>
+                    </keep-alive>
                 </router-view>
             </n-layout-content>
         </n-layout>

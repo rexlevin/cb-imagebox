@@ -97,6 +97,10 @@
 </template>
 
 <script setup>
+defineOptions({
+    name: 'Workflow'
+})
+
 import { ref } from 'vue'
 import { useMessage } from 'naive-ui'
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@vicons/carbon'

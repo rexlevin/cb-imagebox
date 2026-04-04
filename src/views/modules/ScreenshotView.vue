@@ -186,6 +186,10 @@
 </template>
 
 <script setup>
+defineOptions({
+    name: 'Screenshot'
+})
+
 import { ref } from 'vue'
 import { useMessage } from 'naive-ui'
 import { Upload, Paste, Delete, Image, Close } from '@vicons/carbon'

@@ -209,6 +209,10 @@
 </template>
 
 <script setup>
+defineOptions({
+    name: 'Resize'
+})
+
 import { ref, computed } from 'vue'
 import { useMessage } from 'naive-ui'
 import { Upload, Paste, Delete, Image, Close, Download } from '@vicons/carbon'
