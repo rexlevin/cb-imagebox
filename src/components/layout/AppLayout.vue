@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { computed, h } from 'vue'
+import { computed, h, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
 import { useMessage, NIcon } from 'naive-ui'
@@ -78,6 +78,34 @@ const route = useRoute()
 const router = useRouter()
 const settingsStore = useSettingsStore()
 const message = useMessage()
+
+// 恢复上次访问的路由
+onMounted(async () => {
+    if (window.routeAPI) {
+        try {
+            const savedRoute = await window.routeAPI.getRoute()
+            // 只有当当前路由不是首页时才跳转，避免首次启动总是跳转
+            if (route.path === '/' && savedRoute !== '/') {
+                console.log('恢复上次访问的路由:', savedRoute)
+                router.push(savedRoute)
+            }
+        } catch (err) {
+            console.error('恢复路由失败:', err)
+        }
+    }
+})
+
+// 监听路由变化并保存
+watch(() => route.path, async (newPath) => {
+    if (window.routeAPI) {
+        try {
+            await window.routeAPI.saveRoute(newPath)
+            console.log('保存当前路由:', newPath)
+        } catch (err) {
+            console.error('保存路由失败:', err)
+        }
+    }
+})
 
 const currentRoute = computed({
     get: () => route.path,

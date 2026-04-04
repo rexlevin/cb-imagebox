@@ -8,6 +8,7 @@ canbox.hello();
 // 缩放配置
 const ZOOM_STORE_NAME = 'app-settings'
 const ZOOM_KEY = 'zoomLevel'
+const ROUTE_KEY = 'currentRoute'
 
 // 暴露 API 给渲染进程
 contextBridge.exposeInMainWorld('zoomAPI', {
@@ -34,6 +35,32 @@ contextBridge.exposeInMainWorld('zoomAPI', {
             await canbox.store.set(ZOOM_STORE_NAME, ZOOM_KEY, zoom)
         } catch (err) {
             console.error('保存缩放设置失败:', err)
+        }
+    }
+});
+
+// 暴露路由持久化 API
+contextBridge.exposeInMainWorld('routeAPI', {
+    // 获取保存的路由
+    getRoute: async () => {
+        try {
+            const savedRoute = await canbox.store.get(ZOOM_STORE_NAME, ROUTE_KEY)
+            if (savedRoute) {
+                return savedRoute
+            }
+            return '/'
+        } catch (err) {
+            console.error('读取路由设置失败:', err)
+            return '/'
+        }
+    },
+
+    // 保存路由
+    saveRoute: async (route) => {
+        try {
+            await canbox.store.set(ZOOM_STORE_NAME, ROUTE_KEY, route)
+        } catch (err) {
+            console.error('保存路由设置失败:', err)
         }
     }
 });
