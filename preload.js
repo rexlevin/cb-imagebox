@@ -64,3 +64,29 @@ contextBridge.exposeInMainWorld('routeAPI', {
         }
     }
 });
+
+// 暴露语言持久化 API
+contextBridge.exposeInMainWorld('languageAPI', {
+    // 获取保存的语言
+    getLanguage: async () => {
+        try {
+            const savedLanguage = await canbox.store.get(ZOOM_STORE_NAME, 'language')
+            if (savedLanguage) {
+                return savedLanguage
+            }
+            return 'en'
+        } catch (err) {
+            console.error('读取语言设置失败:', err)
+            return 'en'
+        }
+    },
+
+    // 保存语言
+    saveLanguage: async (language) => {
+        try {
+            await canbox.store.set(ZOOM_STORE_NAME, 'language', language)
+        } catch (err) {
+            console.error('保存语言设置失败:', err)
+        }
+    }
+});

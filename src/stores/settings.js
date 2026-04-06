@@ -2,49 +2,39 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 export const useSettingsStore = defineStore('settings', () => {
-  // 从 localStorage 读取保存的设置
-  const getSavedSettings = () => {
+  // 初始化设置（异步加载）
+  const initSettings = async () => {
     try {
-      const saved = localStorage.getItem('imagebox-settings')
-      if (saved) {
-        return JSON.parse(saved)
+      const savedLanguage = await window.languageAPI?.getLanguage()
+      if (savedLanguage && ['en', 'zh-CN'].includes(savedLanguage)) {
+        language.value = savedLanguage
       }
     } catch (e) {
-      console.warn('Failed to load settings:', e)
-    }
-    return null
-  }
-
-  const savedSettings = getSavedSettings()
-
-  const defaultOutputDir = ref(savedSettings?.defaultOutputDir || '')
-  const defaultQuality = ref(savedSettings?.defaultQuality || 85)
-  const watermarkText = ref(savedSettings?.watermarkText || '© 2024 ImageBox')
-  const deviceFrame = ref(savedSettings?.deviceFrame || 'iphone-15-pro')
-  const keepExif = ref(savedSettings?.keepExif ?? true)
-  const language = ref(savedSettings?.language || 'en')
-  const theme = ref(savedSettings?.theme || 'light')
-
-  // 保存设置到 localStorage
-  const saveSettings = () => {
-    try {
-      const settings = {
-        defaultOutputDir: defaultOutputDir.value,
-        defaultQuality: defaultQuality.value,
-        watermarkText: watermarkText.value,
-        deviceFrame: deviceFrame.value,
-        keepExif: keepExif.value,
-        language: language.value,
-        theme: theme.value
-      }
-      localStorage.setItem('imagebox-settings', JSON.stringify(settings))
-    } catch (e) {
-      console.warn('Failed to save settings:', e)
+      console.warn('Failed to load language from languageAPI:', e)
     }
   }
 
-  // 监听设置变化，自动保存
-  watch([defaultOutputDir, defaultQuality, watermarkText, deviceFrame, keepExif, language, theme], saveSettings, { deep: true })
+  const defaultOutputDir = ref('')
+  const defaultQuality = ref(85)
+  const watermarkText = ref('© 2024 ImageBox')
+  const deviceFrame = ref('iphone-15-pro')
+  const keepExif = ref(true)
+  const language = ref('en')
+  const theme = ref('light')
+
+  // 保存语言
+  const saveLanguage = async () => {
+    try {
+      await window.languageAPI?.saveLanguage(language.value)
+    } catch (e) {
+      console.warn('Failed to save language via languageAPI:', e)
+    }
+  }
+
+  // 监听语言变化，自动保存
+  watch(language, () => {
+    saveLanguage()
+  })
 
   function updateSettings(settings) {
     if (settings.defaultOutputDir !== undefined) defaultOutputDir.value = settings.defaultOutputDir
@@ -79,6 +69,7 @@ export const useSettingsStore = defineStore('settings', () => {
     theme,
     updateSettings,
     resetSettings,
-    toggleTheme
+    toggleTheme,
+    initSettings
   }
 })

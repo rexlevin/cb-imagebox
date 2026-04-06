@@ -1,37 +1,37 @@
 <template>
     <div class="watermark-view">
         <!-- 水印设置 -->
-        <n-card class="settings-card" title="水印设置">
+        <n-card class="settings-card" :title="t('watermark.settingsTitle')">
             <div class="settings-grid">
                 <!-- 水印类型 -->
                 <div class="setting-item">
-                    <label class="setting-label">水印类型</label>
+                    <label class="setting-label">{{ t('watermark.type') }}</label>
                     <n-radio-group v-model:value="settings.type" size="small">
-                        <n-radio value="text">文字</n-radio>
-                        <n-radio value="image">图片</n-radio>
+                        <n-radio value="text">{{ t('watermark.textType') }}</n-radio>
+                        <n-radio value="image">{{ t('watermark.imageType') }}</n-radio>
                     </n-radio-group>
                 </div>
 
                 <!-- 文字内容 / 图片上传 -->
                 <div class="setting-item" v-if="settings.type === 'text'">
-                    <label class="setting-label">文字内容</label>
-                    <n-input v-model:value="settings.text" placeholder="输入水印文字" size="small" />
+                    <label class="setting-label">{{ t('watermark.watermarkText') }}</label>
+                    <n-input v-model:value="settings.text" :placeholder="t('watermark.watermarkText')" size="small" />
                 </div>
                 <div class="setting-item" v-else>
-                    <label class="setting-label">水印图片</label>
+                    <label class="setting-label">{{ t('watermark.watermarkImage') }}</label>
                     <n-upload accept="image/*" :max="1" @update:file-list="handleWatermarkImageChange">
                         <n-button size="small">
                             <template #icon>
                                 <n-icon :size="14"><UploadIcon /></n-icon>
                             </template>
-                            选择图片
+                            {{ t('common.selectImages') }}
                         </n-button>
                     </n-upload>
                 </div>
 
                 <!-- 位置九宫格 -->
                 <div class="setting-item setting-item-wide">
-                    <label class="setting-label">水印位置</label>
+                    <label class="setting-label">{{ t('watermark.position') }}</label>
                     <div class="position-grid">
                         <div
                             v-for="pos in positions"
@@ -49,7 +49,7 @@
                 <!-- 样式参数 -->
                 <div class="setting-item">
                     <label class="setting-label">
-                        {{ settings.type === 'text' ? '字体大小' : '缩放比例' }}
+                        {{ settings.type === 'text' ? t('watermark.fontSize') : t('watermark.scaleRatio') }}
                     </label>
                     <div class="input-with-suffix">
                         <n-input-number
@@ -65,7 +65,7 @@
                 </div>
 
                 <div class="setting-item">
-                    <label class="setting-label">透明度</label>
+                    <label class="setting-label">{{ t('watermark.opacity') }}</label>
                     <div class="input-with-suffix">
                         <n-input-number
                             v-model:value="settings.opacity"
@@ -80,12 +80,12 @@
                 </div>
 
                 <div class="setting-item" v-if="settings.type === 'text'">
-                    <label class="setting-label">文字颜色</label>
+                    <label class="setting-label">{{ t('watermark.color') }}</label>
                     <n-color-picker v-model:value="settings.color" size="small" :show-alpha="false" />
                 </div>
 
                 <div class="setting-item">
-                    <label class="setting-label">旋转角度</label>
+                    <label class="setting-label">{{ t('watermark.rotation') }}</label>
                     <div class="input-with-suffix">
                         <n-input-number
                             v-model:value="settings.rotation"
@@ -101,14 +101,14 @@
 
                 <div class="setting-item" v-if="settings.type === 'image'">
                     <n-checkbox v-model:checked="settings.tile" size="small">
-                        平铺水印
+                        {{ t('watermark.tile') }}
                     </n-checkbox>
                 </div>
             </div>
         </n-card>
 
         <!-- 文件列表 -->
-        <n-card class="files-card" :title="files.length > 0 ? `图片列表 (${files.length})` : ' '">
+        <n-card class="files-card" :title="files.length > 0 ? `${t('common.selectImages')} (${files.length})` : ' '">
             <template #header-extra>
                 <div class="header-actions">
                     <n-upload
@@ -122,20 +122,20 @@
                             <template #icon>
                                 <n-icon :size="14"><UploadIcon /></n-icon>
                             </template>
-                            添加图片
+                            {{ t('common.add') }}
                         </n-button>
                     </n-upload>
                     <n-button size="small" @click="handlePaste" v-if="files.length === 0">
                         <template #icon>
                             <n-icon :size="14"><PasteIcon /></n-icon>
                         </template>
-                        粘贴
+                        {{ t('common.paste') }}
                     </n-button>
                     <n-button size="small" @click="handleClear" v-if="files.length > 0">
                         <template #icon>
                             <n-icon :size="14"><TrashIcon /></n-icon>
                         </template>
-                        清空
+                        {{ t('common.clear') }}
                     </n-button>
                 </div>
             </template>
@@ -152,8 +152,8 @@
                 <n-icon :size="48" class="empty-icon">
                     <ImageIcon />
                 </n-icon>
-                <div class="empty-text">拖拽图片到这里</div>
-                <div class="empty-hint">或使用上方按钮添加</div>
+                <div class="empty-text">{{ t('common.dragHere') }}</div>
+                <div class="empty-hint">{{ t('common.orUseButton') }}</div>
             </div>
 
             <!-- 文件列表 -->
@@ -178,16 +178,16 @@
                     </div>
                     <div class="file-status">
                         <n-tag v-if="file.status === 'pending'" size="small" type="default">
-                            待处理
+                            {{ t('common.pending') }}
                         </n-tag>
                         <n-tag v-else-if="file.status === 'processing'" size="small" type="warning">
-                            处理中
+                            {{ t('common.processing') }}
                         </n-tag>
                         <n-tag v-else-if="file.status === 'done'" size="small" type="success">
-                            完成
+                            {{ t('common.done') }}
                         </n-tag>
                         <n-tag v-else-if="file.status === 'error'" size="small" type="error">
-                            失败
+                            {{ t('common.failed') }}
                         </n-tag>
                     </div>
                     <n-button
@@ -213,12 +213,12 @@
                         block
                         @click="handleAddWatermark"
                     >
-                        开始添加水印 ({{ files.length }})
+                        {{ t('watermark.addWatermark') }} ({{ files.length }})
                     </n-button>
 
                     <div v-if="showResult" class="result-summary">
                         <div class="result-stat">
-                            <span class="stat-label">成功:</span>
+                            <span class="stat-label">{{ t('common.success') }}:</span>
                             <span class="stat-value">{{ files.filter(f => f.status === 'done').length }}/{{ files.length }}</span>
                         </div>
                         <div class="result-buttons">
@@ -226,20 +226,20 @@
                                 <template #icon>
                                     <n-icon :size="14"><DownloadIcon /></n-icon>
                                 </template>
-                                下载全部
+                                {{ t('common.download') }}
                             </n-button>
                             <n-button size="small" @click="continueAdd">
                                 <template #icon>
                                     <n-icon :size="14"><UploadIcon /></n-icon>
                                 </template>
-                                继续
+                                {{ t('common.add') }}
                             </n-button>
-                    <n-button size="small" @click="reset">
-                        <template #icon>
-                            <n-icon :size="14"><TrashIcon /></n-icon>
-                        </template>
-                        重置
-                    </n-button>
+                            <n-button size="small" @click="reset">
+                                <template #icon>
+                                    <n-icon :size="14"><TrashIcon /></n-icon>
+                                </template>
+                                {{ t('common.reset') }}
+                            </n-button>
                         </div>
                     </div>
                 </div>
@@ -254,8 +254,11 @@ defineOptions({
 })
 
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMessage } from 'naive-ui'
 import { Upload, Paste, Delete, Image, Close, Download } from '@vicons/carbon'
+
+const { t } = useI18n()
 
 const UploadIcon = Upload
 const PasteIcon = Paste
@@ -276,15 +279,15 @@ const settings = ref({
 })
 
 const positions = [
-    { label: '左上', value: 'top-left' },
-    { label: '中上', value: 'top-center' },
-    { label: '右上', value: 'top-right' },
-    { label: '左中', value: 'center-left' },
-    { label: '居中', value: 'center' },
-    { label: '右中', value: 'center-right' },
-    { label: '左下', value: 'bottom-left' },
-    { label: '中下', value: 'bottom-center' },
-    { label: '右下', value: 'bottom-right' }
+    { label: 'top-left', value: 'top-left' },
+    { label: 'top-center', value: 'top-center' },
+    { label: 'top-right', value: 'top-right' },
+    { label: 'center-left', value: 'center-left' },
+    { label: 'center', value: 'center' },
+    { label: 'center-right', value: 'center-right' },
+    { label: 'bottom-left', value: 'bottom-left' },
+    { label: 'bottom-center', value: 'bottom-center' },
+    { label: 'bottom-right', value: 'bottom-right' }
 ]
 
 const files = ref([])
@@ -323,10 +326,10 @@ const handleWatermarkImageChange = (fileList) => {
             const img = new Image()
             img.onload = () => {
                 watermarkImage.value = img
-                message.success('水印图片已选择')
+                message.success(t('watermark.imageSelected'))
             }
             img.onerror = () => {
-                message.error('水印图片加载失败')
+                message.error(t('watermark.imageLoadFailed'))
             }
             img.src = URL.createObjectURL(file.file)
         }
@@ -344,13 +347,13 @@ const handlePaste = async () => {
                 const blob = await item.getType(imageTypes[0])
                 const file = new File([blob], `pasted_${Date.now()}.png`, { type: blob.type })
                 handleFileChange([{ name: file.name, file }])
-                message.success('已从剪贴板粘贴')
+                message.success(t('common.pastedFromClipboard'))
                 return
             }
         }
-        message.warning('剪贴板中没有图片')
+        message.warning(t('common.noImageInClipboard'))
     } catch (err) {
-        message.error('无法读取剪贴板，请手动添加')
+        message.error(t('common.cannotReadClipboard'))
     }
 }
 
@@ -360,7 +363,7 @@ const handleDrop = (e) => {
     const validFiles = droppedFiles.filter(f => f.type.startsWith('image/'))
     if (validFiles.length > 0) {
         validFiles.forEach(f => handleFileChange([{ name: f.name, file: f }]))
-        message.success(`已添加 ${validFiles.length} 张图片`)
+        message.success(t('common.addedImages', { count: validFiles.length }))
     }
 }
 
@@ -391,7 +394,7 @@ const handleClear = () => {
     if (uploadRef.value) {
         uploadRef.value.clear()
     }
-    message.info('已清空')
+    message.info(t('common.cleared'))
 }
 
 const downloadAll = () => {
@@ -406,18 +409,17 @@ const downloadAll = () => {
             document.body.removeChild(link)
         }
     })
-    message.success('下载已开始')
+    message.success(t('common.downloadStarted'))
 }
 
 const continueAdd = () => {
-    // 清空已处理结果，但保留图片文件和预览
     files.value.forEach(f => {
         if (f.result?.url) URL.revokeObjectURL(f.result.url)
         f.status = 'pending'
         f.result = null
     })
     showResult.value = false
-    message.info('请继续添加图片')
+    message.info(t('common.pleaseAddImages'))
 }
 
 const reset = () => {
@@ -430,22 +432,22 @@ const reset = () => {
     if (uploadRef.value) {
         uploadRef.value.clear()
     }
-    message.info('已重置')
+    message.info(t('common.reseted'))
 }
 
 const handleAddWatermark = async () => {
     if (files.value.length === 0) {
-        message.warning('请先添加图片')
+        message.warning(t('common.pleaseAddImages'))
         return
     }
 
     if (settings.value.type === 'text' && !settings.value.text) {
-        message.warning('请输入水印文字')
+        message.warning(t('watermark.pleaseInputText'))
         return
     }
 
     if (settings.value.type === 'image' && !watermarkImage.value) {
-        message.warning('请选择水印图片')
+        message.warning(t('watermark.pleaseSelectImage'))
         return
     }
 
@@ -491,11 +493,6 @@ const handleAddWatermark = async () => {
                     url: URL.createObjectURL(blob)
                 }
                 file.status = 'done'
-
-                // 不释放原图预览，以便后续可以继续使用
-                // if (file.preview !== URL.createObjectURL(file.file)) {
-                //     URL.revokeObjectURL(file.preview)
-                // }
             } catch (err) {
                 console.error('处理失败:', err)
                 file.status = 'error'
@@ -503,10 +500,10 @@ const handleAddWatermark = async () => {
         }
 
         showResult.value = true
-        message.success('水印添加完成')
+        message.success(t('watermark.watermarkSuccess'))
     } catch (error) {
         console.error('处理失败:', error)
-        message.error('处理失败')
+        message.error(t('watermark.watermarkFailed'))
     } finally {
         processing.value = false
     }

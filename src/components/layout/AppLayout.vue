@@ -13,36 +13,21 @@
                     {{ t(currentTitle) }}
                 </div>
                 <div class="header-actions">
-                    <n-tooltip trigger="hover" placement="bottom">
-                        <template #trigger>
-                            <n-button text @click="toggleTheme" class="header-action-btn">
-                                <template #icon>
-                                    <n-icon :size="24" :component="SwapIcon" />
-                                </template>
-                            </n-button>
+                    <n-button text @click="toggleTheme" class="header-action-btn" :title="t('settings.theme')">
+                        <template #icon>
+                            <n-icon :size="24" :component="SwapIcon" />
                         </template>
-                        {{ t('settings.theme') }}
-                    </n-tooltip>
-                    <n-tooltip trigger="hover" placement="bottom">
-                        <template #trigger>
-                            <n-button text @click="router.push('/help')" class="header-action-btn">
-                                <template #icon>
-                                    <n-icon :size="24" :component="HelpIcon" />
-                                </template>
-                            </n-button>
+                    </n-button>
+                    <n-button text @click="router.push('/help')" class="header-action-btn" :title="t('nav.help')">
+                        <template #icon>
+                            <n-icon :size="24" :component="HelpIcon" />
                         </template>
-                        {{ t('nav.help') }}
-                    </n-tooltip>
-                    <n-tooltip trigger="hover" placement="bottom">
-                        <template #trigger>
-                            <n-button text @click="router.push('/settings')" class="header-action-btn">
-                                <template #icon>
-                                    <n-icon :size="24" :component="SettingsIcon" />
-                                </template>
-                            </n-button>
+                    </n-button>
+                    <n-button text @click="router.push('/settings')" class="header-action-btn" :title="t('nav.settings')">
+                        <template #icon>
+                            <n-icon :size="24" :component="SettingsIcon" />
                         </template>
-                        {{ t('nav.settings') }}
-                    </n-tooltip>
+                    </n-button>
                 </div>
             </n-layout-header>
             <n-layout-content class="content">
@@ -158,20 +143,6 @@ const menuOptions = computed(() => [
         label: () => t('nav.workflow'),
         key: '/workflow',
         icon: () => h('span', { class: 'menu-icon' }, '⚡')
-    },
-    {
-        type: 'divider',
-        key: 'divider'
-    },
-    {
-        label: () => t('nav.help'),
-        key: '/help',
-        icon: () => h('span', { class: 'menu-icon' }, '❓')
-    },
-    {
-        label: () => t('nav.settings'),
-        key: '/settings',
-        icon: () => h('span', { class: 'menu-icon' }, '⚙️')
     }
 ])
 

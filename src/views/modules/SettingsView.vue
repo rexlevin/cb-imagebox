@@ -5,7 +5,7 @@
         <!-- 语言设置 -->
         <n-form-item :label="t('settings.language')">
           <n-select
-            v-model:value="currentLanguage"
+            v-model:value="settingsStore.language"
             :options="languageOptions"
             @update:value="handleLanguageChange"
           />
@@ -26,7 +26,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { setLanguage } from '@/i18n'
 import { useSettingsStore } from '@/stores/settings'
@@ -35,8 +34,6 @@ const { t } = useI18n()
 const settingsStore = useSettingsStore()
 
 const version = '0.0.2'
-
-const currentLanguage = ref(settingsStore.language)
 
 const languageOptions = [
   { label: 'English', value: 'en' },

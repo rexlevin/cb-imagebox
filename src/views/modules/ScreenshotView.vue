@@ -1,10 +1,10 @@
 <template>
     <div class="screenshot-view">
         <!-- 美化设置 -->
-        <n-card class="settings-card" title="美化设置">
+        <n-card class="settings-card" :title="t('screenshot.settingsTitle')">
             <div class="settings-grid">
                 <div class="setting-item">
-                    <label class="setting-label">设备外壳</label>
+                    <label class="setting-label">{{ t('screenshot.deviceFrame') }}</label>
                     <div class="device-grid">
                         <div
                             v-for="device in devices"
@@ -19,26 +19,26 @@
                 </div>
 
                 <div class="setting-item">
-                    <label class="setting-label">背景样式</label>
+                    <label class="setting-label">{{ t('screenshot.backgroundStyle') }}</label>
                     <n-radio-group v-model:value="settings.backgroundType" size="small">
-                        <n-radio value="gradient">渐变</n-radio>
-                        <n-radio value="solid">纯色</n-radio>
-                        <n-radio value="transparent">透明</n-radio>
+                        <n-radio value="gradient">{{ t('screenshot.gradient') }}</n-radio>
+                        <n-radio value="solid">{{ t('screenshot.solid') }}</n-radio>
+                        <n-radio value="transparent">{{ t('screenshot.transparent') }}</n-radio>
                     </n-radio-group>
                 </div>
 
                 <div class="setting-item" v-if="settings.backgroundType === 'gradient'">
-                    <label class="setting-label">渐变配色</label>
+                    <label class="setting-label">{{ t('screenshot.gradientColor') }}</label>
                     <n-select v-model:value="settings.gradient" :options="gradientOptions" size="small" />
                 </div>
 
                 <div class="setting-item" v-if="settings.backgroundType === 'solid'">
-                    <label class="setting-label">背景颜色</label>
+                    <label class="setting-label">{{ t('screenshot.solidColor') }}</label>
                     <n-color-picker v-model:value="settings.solidColor" size="small" :show-alpha="false" />
                 </div>
 
                 <div class="setting-item">
-                    <label class="setting-label">内边距</label>
+                    <label class="setting-label">{{ t('screenshot.padding') }}</label>
                     <div class="input-with-suffix">
                         <n-input-number
                             v-model:value="settings.padding"
@@ -53,7 +53,7 @@
                 </div>
 
                 <div class="setting-item">
-                    <label class="setting-label">圆角</label>
+                    <label class="setting-label">{{ t('screenshot.borderRadius') }}</label>
                     <div class="input-with-suffix">
                         <n-input-number
                             v-model:value="settings.borderRadius"
@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="setting-item">
-                    <label class="setting-label">阴影强度</label>
+                    <label class="setting-label">{{ t('screenshot.shadow') }}</label>
                     <div class="input-with-suffix">
                         <n-input-number
                             v-model:value="settings.shadow"
@@ -84,18 +84,18 @@
 
                 <div class="setting-item setting-item-wide">
                     <n-checkbox v-model:checked="settings.addCaption" size="small">
-                        添加文字说明
+                        {{ t('screenshot.addCaption') }}
                     </n-checkbox>
                 </div>
 
                 <div class="setting-item setting-item-wide" v-if="settings.addCaption">
-                    <n-input v-model:value="settings.caption" placeholder="输入说明文字" size="small" />
+                    <n-input v-model:value="settings.caption" :placeholder="t('screenshot.captionText')" size="small" />
                 </div>
             </div>
         </n-card>
 
         <!-- 文件列表 -->
-        <n-card class="files-card" :title="files.length > 0 ? `截图列表 (${files.length})` : ' '">
+        <n-card class="files-card" :title="files.length > 0 ? `${t('common.selectImages')} (${files.length})` : ' '">
             <template #header-extra>
                 <div class="header-actions">
                     <n-upload
@@ -109,20 +109,20 @@
                             <template #icon>
                                 <n-icon :size="14"><UploadIcon /></n-icon>
                             </template>
-                            添加截图
+                            {{ t('screenshot.addScreenshots') }}
                         </n-button>
                     </n-upload>
                     <n-button size="small" @click="handlePaste" v-if="files.length === 0">
                         <template #icon>
                             <n-icon :size="14"><PasteIcon /></n-icon>
                         </template>
-                        粘贴
+                        {{ t('common.paste') }}
                     </n-button>
                     <n-button size="small" @click="handleClear" v-if="files.length > 0">
                         <template #icon>
                             <n-icon :size="14"><TrashIcon /></n-icon>
                         </template>
-                        清空
+                        {{ t('common.clear') }}
                     </n-button>
                 </div>
             </template>
@@ -139,8 +139,8 @@
                 <n-icon :size="48" class="empty-icon">
                     <ImageIcon />
                 </n-icon>
-                <div class="empty-text">拖拽截图到这里</div>
-                <div class="empty-hint">或使用上方按钮添加</div>
+                <div class="empty-text">{{ t('screenshot.dragScreenshots') }}</div>
+                <div class="empty-hint">{{ t('common.orUseButton') }}</div>
             </div>
 
             <!-- 文件列表 -->
@@ -160,10 +160,10 @@
                         </div>
                     </div>
                     <div class="file-status">
-                        <n-tag v-if="file.status === 'pending'" size="small" type="default">待处理</n-tag>
-                        <n-tag v-else-if="file.status === 'processing'" size="small" type="warning">处理中</n-tag>
-                        <n-tag v-else-if="file.status === 'done'" size="small" type="success">完成</n-tag>
-                        <n-tag v-else-if="file.status === 'error'" size="small" type="error">失败</n-tag>
+                        <n-tag v-if="file.status === 'pending'" size="small" type="default">{{ t('common.pending') }}</n-tag>
+                        <n-tag v-else-if="file.status === 'processing'" size="small" type="warning">{{ t('common.processing') }}</n-tag>
+                        <n-tag v-else-if="file.status === 'done'" size="small" type="success">{{ t('common.done') }}</n-tag>
+                        <n-tag v-else-if="file.status === 'error'" size="small" type="error">{{ t('common.failed') }}</n-tag>
                     </div>
                     <n-button text size="small" @click="handleRemove(file.id)" class="file-remove">
                         <template #icon>
@@ -177,7 +177,7 @@
             <template #footer v-if="files.length > 0">
                 <div class="footer-actions">
                     <n-button type="primary" :loading="processing" block @click="handleExport">
-                        导出图片 ({{ files.length }})
+                        {{ t('screenshot.exportScreenshots') }} ({{ files.length }})
                     </n-button>
                 </div>
             </template>
@@ -190,9 +190,12 @@ defineOptions({
     name: 'Screenshot'
 })
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMessage } from 'naive-ui'
 import { Upload, Paste, Delete, Image, Close } from '@vicons/carbon'
+
+const { t } = useI18n()
 
 const UploadIcon = Upload
 const PasteIcon = Paste
@@ -212,22 +215,22 @@ const settings = ref({
     caption: ''
 })
 
-const devices = [
-    { id: 'iphone-15-pro', name: 'iPhone' },
-    { id: 'android', name: 'Android' },
-    { id: 'macbook', name: 'MacBook' },
-    { id: 'imac', name: 'iMac' },
-    { id: 'ipad', name: 'iPad' },
-    { id: 'none', name: '无边框' }
-]
+const devices = computed(() => [
+    { id: 'iphone-15-pro', name: t('screenshot.deviceIphone') },
+    { id: 'android', name: t('screenshot.deviceAndroid') },
+    { id: 'macbook', name: t('screenshot.deviceMacbook') },
+    { id: 'imac', name: t('screenshot.deviceImac') },
+    { id: 'ipad', name: t('screenshot.deviceIpad') },
+    { id: 'none', name: t('screenshot.deviceNone') }
+])
 
-const gradientOptions = [
-    { label: '紫蓝渐变', value: 'purple-blue' },
-    { label: '橙红渐变', value: 'orange-red' },
-    { label: '青绿渐变', value: 'cyan-green' },
-    { label: '粉紫渐变', value: 'pink-purple' },
-    { label: '深色渐变', value: 'dark' }
-]
+const gradientOptions = computed(() => [
+    { label: t('screenshot.gradientPurpleBlue'), value: 'purple-blue' },
+    { label: t('screenshot.gradientOrangeRed'), value: 'orange-red' },
+    { label: t('screenshot.gradientCyanGreen'), value: 'cyan-green' },
+    { label: t('screenshot.gradientPinkPurple'), value: 'pink-purple' },
+    { label: t('screenshot.gradientDark'), value: 'dark' }
+])
 
 const files = ref([])
 const processing = ref(false)
@@ -265,13 +268,13 @@ const handlePaste = async () => {
                 const blob = await item.getType(imageTypes[0])
                 const file = new File([blob], `pasted_${Date.now()}.png`, { type: blob.type })
                 handleFileChange([{ name: file.name, file }])
-                message.success('已从剪贴板粘贴')
+                message.success(t('common.pastedFromClipboard'))
                 return
             }
         }
-        message.warning('剪贴板中没有图片')
+        message.warning(t('common.noImageInClipboard'))
     } catch (err) {
-        message.error('无法读取剪贴板')
+        message.error(t('common.cannotReadClipboard'))
     }
 }
 
@@ -281,7 +284,7 @@ const handleDrop = (e) => {
     const validFiles = droppedFiles.filter(f => f.type.startsWith('image/'))
     if (validFiles.length > 0) {
         validFiles.forEach(f => handleFileChange([{ name: f.name, file: f }]))
-        message.success(`已添加 ${validFiles.length} 张图片`)
+        message.success(t('common.addedImages', { count: validFiles.length }))
     }
 }
 
@@ -306,12 +309,12 @@ const handleClear = () => {
     if (uploadRef.value) {
         uploadRef.value.clear()
     }
-    message.info('已清空')
+    message.info(t('common.cleared'))
 }
 
 const handleExport = async () => {
     if (files.value.length === 0) {
-        message.warning('请先添加截图')
+        message.warning(t('common.pleaseAddImages'))
         return
     }
     processing.value = true
@@ -499,14 +502,14 @@ const handleExport = async () => {
 
             } catch (err) {
                 console.error('导出失败:', err)
-                message.error(`导出 ${file.name} 失败`)
+                message.error(`${t('screenshot.exportFailed')} ${file.name}`)
             }
         }
 
-        message.success(`成功导出 ${files.value.length} 张图片`)
+        message.success(t('screenshot.exportSuccess', { count: files.value.length }))
     } catch (error) {
         console.error('导出失败:', error)
-        message.error('导出失败')
+        message.error(t('screenshot.exportFailed'))
     } finally {
         processing.value = false
     }

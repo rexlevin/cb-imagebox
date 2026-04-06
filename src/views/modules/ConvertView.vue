@@ -1,10 +1,10 @@
 <template>
     <div class="convert-view">
         <!-- 转换设置 -->
-        <n-card class="settings-card" title="转换设置">
+        <n-card class="settings-card" :title="t('convert.settingsTitle')">
             <div class="settings-grid">
                 <div class="setting-item setting-item-wide">
-                    <label class="setting-label">目标格式</label>
+                    <label class="setting-label">{{ t('convert.targetFormat') }}</label>
                     <div class="format-grid">
                         <div
                             v-for="fmt in formats"
@@ -20,19 +20,19 @@
 
                 <div class="setting-item">
                     <n-checkbox v-model:checked="settings.keepTransparency" size="small">
-                        保留透明通道
+                        {{ t('convert.keepTransparency') }}
                     </n-checkbox>
-                    <div class="checkbox-hint">仅 PNG/WebP</div>
+                    <div class="checkbox-hint">{{ t('convert.transparencyHint') }}</div>
                 </div>
 
                 <div class="setting-item">
                     <n-checkbox v-model:checked="settings.keepExif" size="small">
-                        保留 EXIF 信息
+                        {{ t('convert.keepExif') }}
                     </n-checkbox>
                 </div>
 
                 <div class="setting-item" v-if="settings.format === 'jpeg'">
-                    <label class="setting-label">JPEG 质量</label>
+                    <label class="setting-label">{{ t('convert.jpegQuality') }}</label>
                     <div class="input-with-suffix">
                         <n-input-number
                             v-model:value="settings.quality"
@@ -49,7 +49,7 @@
         </n-card>
 
         <!-- 文件列表 -->
-        <n-card class="files-card" :title="files.length > 0 ? `图片列表 (${files.length})` : ' '">
+        <n-card class="files-card" :title="files.length > 0 ? `${t('common.selectImages')} (${files.length})` : ' '">
             <template #header-extra>
                 <div class="header-actions">
                     <n-upload
@@ -63,20 +63,20 @@
                             <template #icon>
                                 <n-icon :size="14"><UploadIcon /></n-icon>
                             </template>
-                            添加图片
+                            {{ t('common.add') }}
                         </n-button>
                     </n-upload>
                     <n-button size="small" @click="handlePaste" v-if="files.length === 0">
                         <template #icon>
                             <n-icon :size="14"><PasteIcon /></n-icon>
                         </template>
-                        粘贴
+                        {{ t('common.paste') }}
                     </n-button>
                     <n-button size="small" @click="handleClear" v-if="files.length > 0">
                         <template #icon>
                             <n-icon :size="14"><TrashIcon /></n-icon>
                         </template>
-                        清空
+                        {{ t('common.clear') }}
                     </n-button>
                 </div>
             </template>
@@ -93,8 +93,8 @@
                 <n-icon :size="48" class="empty-icon">
                     <ImageIcon />
                 </n-icon>
-                <div class="empty-text">拖拽图片到这里</div>
-                <div class="empty-hint">或使用上方按钮添加</div>
+                <div class="empty-text">{{ t('common.dragHere') }}</div>
+                <div class="empty-hint">{{ t('common.orUseButton') }}</div>
             </div>
 
             <!-- 文件列表 -->
@@ -115,10 +115,10 @@
                         </div>
                     </div>
                     <div class="file-status">
-                        <n-tag v-if="file.status === 'pending'" size="small" type="default">待处理</n-tag>
-                        <n-tag v-else-if="file.status === 'processing'" size="small" type="warning">处理中</n-tag>
-                        <n-tag v-else-if="file.status === 'done'" size="small" type="success">完成</n-tag>
-                        <n-tag v-else-if="file.status === 'error'" size="small" type="error">失败</n-tag>
+                        <n-tag v-if="file.status === 'pending'" size="small" type="default">{{ t('common.pending') }}</n-tag>
+                        <n-tag v-else-if="file.status === 'processing'" size="small" type="warning">{{ t('common.processing') }}</n-tag>
+                        <n-tag v-else-if="file.status === 'done'" size="small" type="success">{{ t('common.done') }}</n-tag>
+                        <n-tag v-else-if="file.status === 'error'" size="small" type="error">{{ t('common.failed') }}</n-tag>
                     </div>
                     <n-button text size="small" @click="handleRemove(file.id)" class="file-remove">
                         <template #icon>
@@ -138,12 +138,12 @@
                         block
                         @click="handleConvert"
                     >
-                        开始转换 ({{ files.length }})
+                        {{ t('convert.startConvert') }} ({{ files.length }})
                     </n-button>
 
                     <div v-if="hasResult" class="result-summary">
                         <div class="result-stat">
-                            <span class="stat-label">成功:</span>
+                            <span class="stat-label">{{ t('common.success') }}:</span>
                             <span class="stat-value">{{ files.filter(f => f.status === 'done').length }}/{{ files.length }}</span>
                         </div>
                         <div class="result-buttons">
@@ -151,19 +151,19 @@
                                 <template #icon>
                                     <n-icon :size="14"><DownloadIcon /></n-icon>
                                 </template>
-                                下载全部
+                                {{ t('common.download') }}
                             </n-button>
                             <n-button size="small" @click="continueAdd">
                                 <template #icon>
                                     <n-icon :size="14"><UploadIcon /></n-icon>
                                 </template>
-                                继续
+                                {{ t('common.add') }}
                             </n-button>
                             <n-button size="small" @click="reset">
                                 <template #icon>
                                     <n-icon :size="14"><TrashIcon /></n-icon>
                                 </template>
-                                重置
+                                {{ t('common.reset') }}
                             </n-button>
                         </div>
                     </div>
@@ -179,8 +179,11 @@ defineOptions({
 })
 
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMessage } from 'naive-ui'
 import { Upload, Paste, Delete, Image, Close, Download } from '@vicons/carbon'
+
+const { t } = useI18n()
 
 const UploadIcon = Upload
 const PasteIcon = Paste
@@ -241,13 +244,13 @@ const handlePaste = async () => {
                 const blob = await item.getType(imageTypes[0])
                 const file = new File([blob], `pasted_${Date.now()}.png`, { type: blob.type })
                 handleFileChange([{ name: file.name, file }])
-                message.success('已从剪贴板粘贴')
+                message.success(t('common.pastedFromClipboard'))
                 return
             }
         }
-        message.warning('剪贴板中没有图片')
+        message.warning(t('common.noImageInClipboard'))
     } catch (err) {
-        message.error('无法读取剪贴板')
+        message.error(t('common.cannotReadClipboard'))
     }
 }
 
@@ -257,7 +260,7 @@ const handleDrop = (e) => {
     const validFiles = droppedFiles.filter(f => f.type.startsWith('image/'))
     if (validFiles.length > 0) {
         validFiles.forEach(f => handleFileChange([{ name: f.name, file: f }]))
-        message.success(`已添加 ${validFiles.length} 张图片`)
+        message.success(t('common.addedImages', { count: validFiles.length }))
     }
 }
 
@@ -282,7 +285,7 @@ const handleClear = () => {
     if (uploadRef.value) {
         uploadRef.value.clear()
     }
-    message.info('已清空')
+    message.info(t('common.cleared'))
 }
 
 const hasResult = computed(() => {
@@ -291,7 +294,7 @@ const hasResult = computed(() => {
 
 const handleConvert = async () => {
     if (files.value.length === 0) {
-        message.warning('请先添加图片')
+        message.warning(t('common.pleaseAddImages'))
         return
     }
     processing.value = true
@@ -357,21 +360,17 @@ const handleConvert = async () => {
                     url: URL.createObjectURL(blob)
                 }
                 file.status = 'done'
-
-                // 不释放原图预览，以便后续可以继续使用
-                // if (file.preview !== URL.createObjectURL(file.file)) {
-                //     URL.revokeObjectURL(file.preview)
-                // }
             } catch (err) {
                 console.error('转换失败:', err)
                 file.status = 'error'
             }
         }
 
-        message.success(`成功转换 ${files.value.filter(f => f.status === 'done').length}/${files.value.length} 张图片`)
+        const successCount = files.value.filter(f => f.status === 'done').length
+        message.success(t('convert.successConverted', { success: successCount, total: files.value.length }))
     } catch (error) {
         console.error('转换失败:', error)
-        message.error('转换失败')
+        message.error(t('convert.convertFailed'))
     } finally {
         processing.value = false
     }
@@ -389,17 +388,16 @@ const downloadAll = () => {
             document.body.removeChild(link)
         }
     })
-    message.success('下载已开始')
+    message.success(t('common.downloadStarted'))
 }
 
 const continueAdd = () => {
-    // 清空已处理结果，但保留图片文件和预览
     files.value.forEach(f => {
         if (f.result?.url) URL.revokeObjectURL(f.result.url)
         f.status = 'pending'
         f.result = null
     })
-    message.info('请继续添加图片')
+    message.info(t('common.pleaseAddImages'))
 }
 
 const reset = () => {
@@ -411,7 +409,7 @@ const reset = () => {
     if (uploadRef.value) {
         uploadRef.value.clear()
     }
-    message.info('已重置')
+    message.info(t('common.reseted'))
 }
 </script>
 

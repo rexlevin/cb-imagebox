@@ -16,6 +16,7 @@ import { darkTheme, lightTheme } from 'naive-ui'
 import AppLayout from './components/layout/AppLayout.vue'
 import ClipboardBar from './components/common/ClipboardBar.vue'
 import { useSettingsStore } from './stores/settings'
+import { initI18n, setLanguage } from './i18n'
 
 const hasClipboardImage = ref(false)
 const settingsStore = useSettingsStore()
@@ -38,9 +39,11 @@ watch(() => settingsStore.theme, (newTheme) => {
     document.documentElement.setAttribute('data-theme', newTheme)
 }, { immediate: true })
 
-// 初始化时设置主题
-onMounted(() => {
+// 初始化时设置主题和加载语言
+onMounted(async () => {
     document.documentElement.setAttribute('data-theme', settingsStore.theme)
+    await settingsStore.initSettings()
+    initI18n(settingsStore.language)
 })
 </script>
 

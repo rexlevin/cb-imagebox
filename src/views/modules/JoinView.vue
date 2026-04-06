@@ -1,21 +1,21 @@
 <template>
     <div class="join-view">
         <!-- 拼接设置 -->
-        <n-card class="settings-card" title="拼接设置">
+        <n-card class="settings-card" :title="t('join.settingsTitle')">
             <div class="settings-grid">
                 <!-- 拼接方向 -->
                 <div class="setting-item">
-                    <label class="setting-label">拼接方向</label>
+                    <label class="setting-label">{{ t('join.direction') }}</label>
                     <n-radio-group v-model:value="settings.direction" size="small">
-                        <n-radio-button value="horizontal">横向</n-radio-button>
-                        <n-radio-button value="vertical">纵向</n-radio-button>
-                        <n-radio-button value="grid">网格</n-radio-button>
+                        <n-radio-button value="horizontal">{{ t('join.horizontal') }}</n-radio-button>
+                        <n-radio-button value="vertical">{{ t('join.vertical') }}</n-radio-button>
+                        <n-radio-button value="grid">{{ t('join.grid') }}</n-radio-button>
                     </n-radio-group>
                 </div>
 
                 <!-- 网格列数 -->
                 <div class="setting-item" v-if="settings.direction === 'grid'">
-                    <label class="setting-label">网格列数</label>
+                    <label class="setting-label">{{ t('join.columns') }}</label>
                     <n-input-number
                         v-model:value="settings.columns"
                         :min="2"
@@ -28,7 +28,7 @@
 
                 <!-- 间距 -->
                 <div class="setting-item">
-                    <label class="setting-label">间距</label>
+                    <label class="setting-label">{{ t('join.spacing') }}</label>
                     <div class="input-with-suffix">
                         <n-input-number
                             v-model:value="settings.spacing"
@@ -44,13 +44,13 @@
 
                 <!-- 背景色 -->
                 <div class="setting-item">
-                    <label class="setting-label">背景色</label>
+                    <label class="setting-label">{{ t('join.backgroundColor') }}</label>
                     <n-color-picker v-model:value="settings.backgroundColor" size="small" :show-alpha="false" />
                 </div>
 
                 <!-- 圆角 -->
                 <div class="setting-item">
-                    <label class="setting-label">圆角</label>
+                    <label class="setting-label">{{ t('join.borderRadius') }}</label>
                     <div class="input-with-suffix">
                         <n-input-number
                             v-model:value="settings.borderRadius"
@@ -66,19 +66,19 @@
 
                 <!-- 尺寸统一 -->
                 <div class="setting-item setting-item-wide">
-                    <label class="setting-label">尺寸统一</label>
+                    <label class="setting-label">{{ t('join.sizeUniform') }}</label>
                     <n-radio-group v-model:value="settings.sizeStrategy" size="small">
-                        <n-radio value="none">不处理</n-radio>
-                        <n-radio value="equalWidth">等宽</n-radio>
-                        <n-radio value="equalHeight">等高</n-radio>
-                        <n-radio value="forceUniform">强制统一</n-radio>
+                        <n-radio value="none">{{ t('join.sizeNone') }}</n-radio>
+                        <n-radio value="equalWidth">{{ t('join.sizeEqualWidth') }}</n-radio>
+                        <n-radio value="equalHeight">{{ t('join.sizeEqualHeight') }}</n-radio>
+                        <n-radio value="forceUniform">{{ t('join.sizeForceUniform') }}</n-radio>
                     </n-radio-group>
                 </div>
 
                 <!-- 对齐方式 -->
                 <div class="setting-item">
                     <label class="setting-label">
-                        {{ settings.direction === 'horizontal' ? '垂直对齐' : '水平对齐' }}
+                        {{ settings.direction === 'horizontal' ? t('join.alignVertical') : t('join.alignHorizontal') }}
                     </label>
                     <n-select
                         v-model:value="settings.alignment"
@@ -89,7 +89,7 @@
 
                 <!-- 输出格式 -->
                 <div class="setting-item">
-                    <label class="setting-label">输出格式</label>
+                    <label class="setting-label">{{ t('join.outputFormat') }}</label>
                     <n-radio-group v-model:value="settings.outputFormat" size="small">
                         <n-radio value="jpg">JPG</n-radio>
                         <n-radio value="png">PNG</n-radio>
@@ -99,7 +99,7 @@
 
                 <!-- 输出质量 -->
                 <div class="setting-item" v-if="settings.outputFormat !== 'png'">
-                    <label class="setting-label">质量</label>
+                    <label class="setting-label">{{ t('join.outputQuality') }}</label>
                     <div class="input-with-suffix">
                         <n-input-number
                             v-model:value="settings.outputQuality"
@@ -116,7 +116,7 @@
         </n-card>
 
         <!-- 图片列表 -->
-        <n-card class="files-card" :title="images.length > 0 ? `图片列表 (${images.length})` : ' '">
+        <n-card class="files-card" :title="images.length > 0 ? `${t('join.imageList')} (${images.length})` : ' '">
             <template #header-extra>
                 <div class="header-actions">
                     <n-upload
@@ -131,20 +131,20 @@
                             <template #icon>
                                 <n-icon :size="14"><UploadIcon /></n-icon>
                             </template>
-                            添加图片
+                            {{ t('join.addImages') }}
                         </n-button>
                     </n-upload>
                     <n-button size="small" @click="handlePaste" v-if="images.length === 0">
                         <template #icon>
                             <n-icon :size="14"><PasteIcon /></n-icon>
                         </template>
-                        粘贴
+                        {{ t('common.paste') }}
                     </n-button>
                     <n-button size="small" @click="handleClear" v-if="images.length > 0">
                         <template #icon>
                             <n-icon :size="14"><TrashIcon /></n-icon>
                         </template>
-                        清空
+                        {{ t('common.clear') }}
                     </n-button>
                 </div>
             </template>
@@ -161,8 +161,8 @@
                 <n-icon :size="48" class="empty-icon">
                     <ImageIcon />
                 </n-icon>
-                <div class="empty-text">拖拽图片到这里</div>
-                <div class="empty-hint">支持多张图片，可拖拽排序</div>
+                <div class="empty-text">{{ t('common.dragHere') }}</div>
+                <div class="empty-hint">{{ t('join.dragForSort') }}</div>
             </div>
 
             <!-- 图片列表 -->
@@ -215,7 +215,7 @@
 
             <!-- 预览 -->
             <div v-if="images.length > 0" class="preview-section">
-                <div class="preview-label">预览</div>
+                <div class="preview-label">{{ t('join.preview') }}</div>
                 <div class="preview-container">
                     <div class="preview-canvas" :style="previewStyle">
                         <div
@@ -229,8 +229,8 @@
                     </div>
                 </div>
                 <div class="preview-info">
-                    预估输出: {{ estimatedDimensions.width }} × {{ estimatedDimensions.height }} px
-                    <span v-if="estimatedDimensions.warning" class="warning-text">{{ estimatedDimensions.warning }}</span>
+                    {{ t('join.estimatedOutput', { width: estimatedDimensions.width, height: estimatedDimensions.height }) }}
+                    <span v-if="estimatedDimensions.warning" class="warning-text">{{ t('join.sizeWarning') }}</span>
                 </div>
             </div>
 
@@ -244,12 +244,12 @@
                         block
                         @click="handleJoin"
                     >
-                        开始拼接 ({{ images.length }}张)
+                        {{ t('join.startJoin') }} ({{ images.length }})
                     </n-button>
 
                     <div v-if="joinedResult" class="result-summary">
                         <div class="result-stat">
-                            <span class="stat-label">尺寸:</span>
+                            <span class="stat-label">{{ t('join.size') }}:</span>
                             <span class="stat-value">{{ joinedResult.width }}×{{ joinedResult.height }}</span>
                         </div>
                         <div class="result-buttons">
@@ -257,19 +257,19 @@
                                 <template #icon>
                                     <n-icon :size="14"><DownloadIcon /></n-icon>
                                 </template>
-                                下载
+                                {{ t('common.download') }}
                             </n-button>
                             <n-button size="small" @click="continueAdd">
                                 <template #icon>
                                     <n-icon :size="14"><UploadIcon /></n-icon>
                                 </template>
-                                继续
+                                {{ t('common.add') }}
                             </n-button>
                             <n-button size="small" @click="reset">
                                 <template #icon>
                                     <n-icon :size="14"><TrashIcon /></n-icon>
                                 </template>
-                                重置
+                                {{ t('common.reset') }}
                             </n-button>
                         </div>
                     </div>
@@ -285,8 +285,11 @@ defineOptions({
 })
 
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMessage } from 'naive-ui'
 import { Upload, Paste, Delete, Image, Close, ChevronUp, ChevronDown, Download } from '@vicons/carbon'
+
+const { t } = useI18n()
 
 const UploadIcon = Upload
 const PasteIcon = Paste
@@ -312,15 +315,15 @@ const settings = ref({
 const alignmentOptions = computed(() => {
     if (settings.value.direction === 'horizontal') {
         return [
-            { label: '顶部对齐', value: 'start' },
-            { label: '垂直居中', value: 'center' },
-            { label: '底部对齐', value: 'end' }
+            { label: t('join.alignTop'), value: 'start' },
+            { label: t('join.alignVCenter'), value: 'center' },
+            { label: t('join.alignBottom'), value: 'end' }
         ]
     }
     return [
-        { label: '左对齐', value: 'start' },
-        { label: '水平居中', value: 'center' },
-        { label: '右对齐', value: 'end' }
+        { label: t('join.alignLeft'), value: 'start' },
+        { label: t('join.alignHCenter'), value: 'center' },
+        { label: t('join.alignRight'), value: 'end' }
     ]
 })
 
@@ -391,13 +394,13 @@ const handlePaste = async () => {
                 const blob = await item.getType(imageTypes[0])
                 const file = new File([blob], `pasted_${Date.now()}.png`, { type: blob.type })
                 handleFileChange([{ name: file.name, file }])
-                message.success('已从剪贴板粘贴')
+                message.success(t('common.pastedFromClipboard'))
                 return
             }
         }
-        message.warning('剪贴板中没有图片')
+        message.warning(t('common.noImageInClipboard'))
     } catch (err) {
-        message.error('无法读取剪贴板，请手动添加')
+        message.error(t('common.cannotReadClipboard'))
     }
 }
 
@@ -407,7 +410,7 @@ const handleDrop = (e) => {
     const validFiles = droppedFiles.filter(f => f.type.startsWith('image/'))
     if (validFiles.length > 0) {
         validFiles.forEach(f => handleFileChange([{ name: f.name, file: f }]))
-        message.success(`已添加 ${validFiles.length} 张图片`)
+        message.success(t('common.addedImages', { count: validFiles.length }))
     }
 }
 
@@ -430,7 +433,7 @@ const handleClear = () => {
     })
     images.value = []
     uploadFileList.value = []
-    message.info('已清空')
+    message.info(t('common.cleared'))
 }
 
 const moveUp = (index) => {
@@ -567,7 +570,7 @@ const estimatedDimensions = computed(() => {
 
     let warning = ''
     if (width > 10000 || height > 10000) {
-        warning = ' (尺寸过大，建议减少图片数量)'
+        warning = 'sizeWarning'
     }
 
     return { width, height, warning }
@@ -575,7 +578,7 @@ const estimatedDimensions = computed(() => {
 
 const handleJoin = async () => {
     if (images.value.length < 2) {
-        message.warning('请至少添加2张图片')
+        message.warning(t('join.pleaseAddTwoImages'))
         return
     }
 
@@ -757,10 +760,10 @@ const handleJoin = async () => {
             height: totalHeight
         }
 
-        message.success('拼接完成')
+        message.success(t('join.joinSuccess'))
     } catch (error) {
         console.error('拼接失败:', error)
-        message.error('拼接失败')
+        message.error(t('join.joinFailed'))
     } finally {
         processing.value = false
     }
@@ -823,7 +826,7 @@ const downloadResult = () => {
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
-        message.success('下载已开始')
+        message.success(t('common.downloadStarted'))
     }
 }
 
@@ -833,7 +836,7 @@ const continueAdd = () => {
         URL.revokeObjectURL(joinedResult.value.url)
     }
     joinedResult.value = null
-    message.info('请继续添加图片')
+    message.info(t('common.pleaseAddImages'))
 }
 
 const reset = () => {
@@ -846,7 +849,7 @@ const reset = () => {
     images.value = []
     uploadFileList.value = []
     joinedResult.value = null
-    message.info('已重置')
+    message.info(t('common.reseted'))
 }
 </script>
 

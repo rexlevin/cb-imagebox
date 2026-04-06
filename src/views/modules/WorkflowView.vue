@@ -1,6 +1,6 @@
 <template>
     <div class="workflow-view">
-        <n-card class="presets-card" title="选择预设流程">
+        <n-card class="presets-card" :title="t('workflow.settingsTitle')">
             <div class="presets-grid">
                 <n-card v-for="preset in presets" :key="preset.id" class="preset-card" hoverable
                     @click="applyPreset(preset)">
@@ -8,13 +8,13 @@
                     <div class="preset-title">{{ preset.title }}</div>
                     <div class="preset-desc">{{ preset.desc }}</div>
                     <n-button type="primary" ghost size="small" block>
-                        使用
+                        {{ t('workflow.use') }}
                     </n-button>
                 </n-card>
             </div>
         </n-card>
 
-        <n-card class="workflow-card" title="自定义流程">
+        <n-card class="workflow-card" :title="t('workflow.customWorkflow')">
             <div class="workflow-steps">
                 <div v-for="(step, index) in steps" :key="step.id" class="workflow-step">
                     <div class="step-header">
@@ -41,7 +41,7 @@
                     <template #icon>
                         <n-icon :component="AddIcon" />
                     </template>
-                    添加步骤
+                    {{ t('workflow.addStep') }}
                 </n-button>
             </div>
 
@@ -49,29 +49,29 @@
                 <template #icon>
                     <n-icon :component="AddIcon" />
                 </template>
-                添加步骤
+                {{ t('workflow.addStep') }}
             </n-button>
         </n-card>
 
-        <n-card class="batch-card" title="批量处理">
+        <n-card class="batch-card" :title="t('workflow.batchProcessing')">
             <ImageUploader multiple @upload="handleUpload" />
             <n-form label-placement="top" style="margin-top: 16px">
-                <n-form-item label="输出目录">
-                    <n-input v-model:value="outputDir" placeholder="选择输出目录">
+                <n-form-item :label="t('workflow.outputDir')">
+                    <n-input v-model:value="outputDir" :placeholder="t('workflow.outputDir')">
                         <template #suffix>
                             <n-button text size="small">
-                                浏览
+                                {{ t('common.browse') }}
                             </n-button>
                         </template>
                     </n-input>
                 </n-form-item>
-                <n-form-item label="命名规则">
+                <n-form-item :label="t('workflow.namingRule')">
                     <n-input v-model:value="namingRule" placeholder="{原文件名}_压缩" />
                 </n-form-item>
-                <n-form-item label="输出格式">
+                <n-form-item :label="t('workflow.outputFormat')">
                     <n-radio-group v-model:value="outputFormat">
-                        <n-radio value="original">保持原格式</n-radio>
-                        <n-radio value="jpeg">全部转为 JPEG</n-radio>
+                        <n-radio value="original">{{ t('workflow.keepOriginal') }}</n-radio>
+                        <n-radio value="jpeg">{{ t('workflow.convertToJpeg') }}</n-radio>
                     </n-radio-group>
                 </n-form-item>
             </n-form>
@@ -79,18 +79,18 @@
 
         <FileList :files="files" @remove="handleRemove" @clear="handleClear" />
         <n-button type="primary" size="large" :loading="processing" block @click="handleBatchProcess">
-            开始批量处理
+            {{ t('workflow.startBatch') }}
         </n-button>
 
-        <n-modal v-model:show="showAddStep" preset="card" title="添加步骤">
+        <n-modal v-model:show="showAddStep" preset="card" :title="t('workflow.addStep')">
             <n-form label-placement="top">
-                <n-form-item label="步骤类型">
+                <n-form-item :label="t('workflow.stepType')">
                     <n-select v-model:value="newStepType" :options="stepTypes" />
                 </n-form-item>
             </n-form>
             <template #footer>
-                <n-button @click="showAddStep = false">取消</n-button>
-                <n-button type="primary" @click="confirmAddStep">确定</n-button>
+                <n-button @click="showAddStep = false">{{ t('common.cancel') }}</n-button>
+                <n-button type="primary" @click="confirmAddStep">{{ t('common.confirm') }}</n-button>
             </template>
         </n-modal>
     </div>
@@ -101,11 +101,14 @@ defineOptions({
     name: 'Workflow'
 })
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMessage } from 'naive-ui'
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@vicons/carbon'
 import ImageUploader from '@/components/common/ImageUploader.vue'
 import FileList from '@/components/common/FileList.vue'
+
+const { t } = useI18n()
 
 const showAddStep = ref(false)
 const newStepType = ref('compress')
@@ -117,36 +120,36 @@ const namingRule = ref('{原文件名}_压缩')
 const outputFormat = ref('original')
 const message = useMessage()
 
-const presets = [
+const presets = computed(() => [
     {
         id: 'compress-watermark',
         icon: '🗜️💧',
-        title: '压缩+水印',
-        desc: '适合发布',
+        title: t('workflow.compress') + '+' + t('workflow.watermark'),
+        desc: t('features.compress.desc'),
         steps: [
-            { type: 'compress', description: '压缩 (质量: 80%)' },
-            { type: 'watermark', description: '水印 (右下角, 50%)' }
+            { type: 'compress', description: `${t('workflow.compress')} (${t('compress.quality')}: 80%)` },
+            { type: 'watermark', description: `${t('workflow.watermark')} (${t('watermark.position')}: bottom-right, 50%)` }
         ]
     },
     {
         id: 'compress-resize-watermark',
         icon: '🗜️📐💧',
-        title: '压缩+调整+水印',
-        desc: '适合电商',
+        title: t('workflow.compress') + '+' + t('workflow.resize') + '+' + t('workflow.watermark'),
+        desc: t('features.resize.desc'),
         steps: [
-            { type: 'compress', description: '压缩 (质量: 85%)' },
-            { type: 'resize', description: '调整尺寸 (1920×1080)' },
-            { type: 'watermark', description: '水印 (右下角, 40%)' }
+            { type: 'compress', description: `${t('workflow.compress')} (${t('compress.quality')}: 85%)` },
+            { type: 'resize', description: `${t('workflow.resize')} (1920×1080)` },
+            { type: 'watermark', description: `${t('workflow.watermark')} (${t('watermark.position')}: bottom-right, 40%)` }
         ]
     }
-]
+])
 
-const stepTypes = [
-    { label: '压缩', value: 'compress' },
-    { label: '调整尺寸', value: 'resize' },
-    { label: '水印', value: 'watermark' },
-    { label: '格式转换', value: 'convert' }
-]
+const stepTypes = computed(() => [
+    { label: t('workflow.compress'), value: 'compress' },
+    { label: t('workflow.resize'), value: 'resize' },
+    { label: t('workflow.watermark'), value: 'watermark' },
+    { label: t('workflow.convert'), value: 'convert' }
+])
 
 const getStepType = (type) => {
     const typeMap = {
@@ -163,7 +166,7 @@ const applyPreset = (preset) => {
         id: Date.now() + index,
         ...step
     }))
-    message.success(`已应用预设: ${preset.title}`)
+    message.success(t('workflow.appliedPreset', { name: preset.title }))
 }
 
 const removeStep = (index) => {
@@ -172,10 +175,10 @@ const removeStep = (index) => {
 
 const confirmAddStep = () => {
     const descMap = {
-        compress: '压缩 (质量: 80%)',
-        resize: '调整尺寸 (1920×1080)',
-        watermark: '水印 (右下角, 50%)',
-        convert: '转换为 JPEG'
+        compress: `${t('workflow.compress')} (${t('compress.quality')}: 80%)`,
+        resize: `${t('workflow.resize')} (1920×1080)`,
+        watermark: `${t('workflow.watermark')} (${t('watermark.position')}: bottom-right, 50%)`,
+        convert: `${t('workflow.convert')} → JPEG`
     }
 
     steps.value.push({
@@ -210,11 +213,11 @@ const handleClear = () => {
 
 const handleBatchProcess = async () => {
     if (steps.value.length === 0) {
-        message.warning('请先添加处理步骤')
+        message.warning(t('workflow.pleaseAddSteps'))
         return
     }
     if (files.value.length === 0) {
-        message.warning('请先上传文件')
+        message.warning(t('workflow.pleaseUploadFiles'))
         return
     }
 

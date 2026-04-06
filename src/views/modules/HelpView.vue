@@ -74,7 +74,7 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n'
-import { Image as ImageIcon, Adjustments as AdjustmentsIcon, Download as DownloadIcon } from '@vicons/carbon'
+import { Image as ImageIcon, Edit as AdjustmentsIcon, Download as DownloadIcon } from '@vicons/carbon'
 
 const { t } = useI18n()
 
