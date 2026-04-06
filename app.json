@@ -8,7 +8,7 @@
     "homepage": "https://rexlevin.github.io/canbox-pages/",
     "main": "dist/index.html",
     "logo": "logo.png",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "window": {
         "minWidth": 900,
         "minHeight": 600,

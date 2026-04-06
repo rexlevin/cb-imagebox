@@ -5,7 +5,9 @@
         "logo.png",
         "app.json",
         "README.md",
-        "HISTORY.md"
+        "README_zh-CN.md",
+        "HISTORY.md",
+        "LICENSE"
     ],
     "outputDir": "./build"
 }
