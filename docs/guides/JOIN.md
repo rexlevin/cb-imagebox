@@ -82,7 +82,7 @@
 
 ## 技术实现
 
-### Jimp 实现思路
+### Canvas 实现思路
 
 ```javascript
 // 纵向拼接示例
@@ -94,24 +94,30 @@ async function joinVertical(images, options) {
   let maxWidth = 0;
   
   for (const img of images) {
-    totalHeight += img.getHeight() + spacing;
-    maxWidth = Math.max(maxWidth, img.getWidth());
+    totalHeight += img.height + spacing;
+    maxWidth = Math.max(maxWidth, img.width);
   }
   totalHeight -= spacing; // 最后一个不需要间距
   
   // 2. 创建画布
-  const canvas = new Jimp(maxWidth, totalHeight, bgColor);
+  const canvas = document.createElement('canvas');
+  canvas.width = maxWidth;
+  canvas.height = totalHeight;
+  const ctx = canvas.getContext('2d');
   
-  // 3. 拼接图片
+  // 3. 填充背景
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, maxWidth, totalHeight);
+  
+  // 4. 拼接图片
   let y = 0;
   for (const img of images) {
-    // 居中放置
-    const x = Math.floor((maxWidth - img.getWidth()) / 2);
-    canvas.composite(img, x, y);
-    y += img.getHeight() + spacing;
+    const x = Math.floor((maxWidth - img.width) / 2);
+    ctx.drawImage(img, x, y);
+    y += img.height + spacing;
   }
   
-  return canvas;
+  return canvas.toDataURL('image/jpeg', 0.9);
 }
 ```
 
@@ -124,14 +130,21 @@ async function joinGrid(images, options) {
   const rows = Math.ceil(images.length / columns);
   
   // 计算单元格尺寸（取最大）
-  const cellWidth = Math.max(...images.map(img => img.getWidth()));
-  const cellHeight = Math.max(...images.map(img => img.getHeight()));
+  const cellWidth = Math.max(...images.map(img => img.width));
+  const cellHeight = Math.max(...images.map(img => img.height));
   
   // 画布尺寸
   const canvasWidth = cellWidth * columns + spacing * (columns - 1);
   const canvasHeight = cellHeight * rows + spacing * (rows - 1);
   
-  const canvas = new Jimp(canvasWidth, canvasHeight, bgColor);
+  const canvas = document.createElement('canvas');
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  const ctx = canvas.getContext('2d');
+  
+  // 填充背景
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   
   // 放置图片
   images.forEach((img, index) => {
@@ -139,10 +152,10 @@ async function joinGrid(images, options) {
     const col = index % columns;
     const x = col * (cellWidth + spacing);
     const y = row * (cellHeight + spacing);
-    canvas.composite(img, x, y);
+    ctx.drawImage(img, x, y);
   });
   
-  return canvas;
+  return canvas.toDataURL('image/jpeg', 0.9);
 }
 ```
 

@@ -51,7 +51,7 @@ heic-decode (解码器)
     ↓
 原始像素数据 (RGBA)
     ↓
-Jimp (图像处理)
+Canvas (图像处理)
     ↓
 输出 JPEG/PNG/WebP
 ```
@@ -59,25 +59,22 @@ Jimp (图像处理)
 ### 代码示例
 
 ```typescript
-import decode from 'heic-decode';
-import { Jimp } from 'jimp';
-
-async function processHeic(fileBuffer: Buffer) {
+async function processHeic(fileBuffer: ArrayBuffer) {
   // 1. 解码 HEIC
-  const { width, height, data } = await decode({ 
-    buffer: fileBuffer 
+  const blob = new Blob([fileBuffer]);
+  const bitmap = await createImageBitmap(blob);
+  
+  // 2. 创建 Canvas
+  const canvas = document.createElement('canvas');
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(bitmap, 0, 0);
+  
+  // 3. 输出为 JPEG
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.85);
   });
-  
-  // 2. 创建 Jimp 图像
-  const image = new Jimp({ width, height, data });
-  
-  // 3. 正常处理 (压缩/水印/裁剪等)
-  const processed = await image
-    .resize(1920, Jimp.AUTO)
-    .quality(85);
-  
-  // 4. 输出为 JPEG
-  return await processed.getBuffer('image/jpeg');
 }
 ```
 
@@ -87,19 +84,22 @@ async function processHeic(fileBuffer: Buffer) {
 |------|------|------|
 | 解码速度 | ~100ms/张 | iPhone 12 Pro 照片 (3024×4032) |
 | 内存占用 | ~50MB | 单张处理峰值 |
-| 包体积 | +200KB | heic-decode 本身 |
 
 ### 批量处理优化
 
 ```typescript
 // 使用队列控制并发，避免内存溢出
-const queue = new PQueue({ concurrency: 3 });
-
-const results = await Promise.all(
-  heicFiles.map(file => 
-    queue.add(() => processHeic(file))
-  )
-);
+const processQueue = async (files, concurrency = 3) => {
+  const results = [];
+  for (let i = 0; i < files.length; i += concurrency) {
+    const batch = files.slice(i, i + concurrency);
+    const batchResults = await Promise.all(
+      batch.map(file => processHeic(file))
+    );
+    results.push(...batchResults);
+  }
+  return results;
+};
 ```
 
 ## 用户界面提示
@@ -123,7 +123,7 @@ A:
 
 **Q: Live Photo 怎么处理?**
 A:
-- heic-decode 只提取静态图像部分
+- 当前方案只提取静态图像部分
 - 如需保留动态效果，需额外处理视频轨道
 - 当前版本暂不支持
 
