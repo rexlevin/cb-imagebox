@@ -1,0 +1,174 @@
+{
+  "app": {
+    "name": "ImageBox",
+    "tagline": "轻量级图片处理工具箱"
+  },
+  "nav": {
+    "home": "首页",
+    "compress": "图片压缩",
+    "convert": "格式转换",
+    "resize": "尺寸调整",
+    "watermark": "添加水印",
+    "screenshot": "截图美化",
+    "join": "图片拼接",
+    "workflow": "批量工作流",
+    "help": "帮助",
+    "settings": "设置"
+  },
+  "common": {
+    "add": "添加",
+    "remove": "移除",
+    "clear": "清空",
+    "cancel": "取消",
+    "confirm": "确认",
+    "save": "保存",
+    "close": "关闭",
+    "download": "下载",
+    "paste": "粘贴",
+    "upload": "上传",
+    "start": "开始",
+    "reset": "重置",
+    "success": "成功",
+    "error": "错误",
+    "warning": "警告",
+    "info": "提示",
+    "px": "像素",
+    "noLimit": "不限制"
+  },
+  "compress": {
+    "title": "图片压缩",
+    "settingsTitle": "压缩设置",
+    "addImages": "添加图片",
+    "imageList": "图片列表",
+    "originalSize": "原始",
+    "compressedSize": "压缩后",
+    "saved": "节省",
+    "quality": "质量",
+    "outputFormat": "输出格式",
+    "formatOriginal": "原格式",
+    "startCompress": "开始压缩",
+    "compressing": "压缩中...",
+    "compressSuccess": "压缩完成！",
+    "compressFailed": "压缩失败",
+    "noImages": "暂无图片",
+    "dragOrPaste": "拖拽图片到此处或从剪贴板粘贴",
+    "targetFormat": "目标格式",
+    "maxWidth": "最大宽度",
+    "keepExif": "保留 EXIF 信息",
+    "pngQuantize": "PNG 智能压缩",
+    "pngColors": "颜色数",
+    "webpFallback": "允许 WebP 回退"
+  },
+  "convert": {
+    "title": "格式转换",
+    "selectFormat": "选择格式",
+    "sourceFormat": "源格式",
+    "targetFormat": "目标格式",
+    "startConvert": "开始转换",
+    "converting": "转换中...",
+    "convertSuccess": "转换完成！",
+    "convertFailed": "转换失败"
+  },
+  "resize": {
+    "title": "尺寸调整",
+    "width": "宽度",
+    "height": "高度",
+    "keepRatio": "保持比例",
+    "presets": "预设",
+    "startResize": "开始调整"
+  },
+  "watermark": {
+    "title": "添加水印",
+    "textWatermark": "文字水印",
+    "imageWatermark": "图片水印",
+    "watermarkText": "水印文字",
+    "position": "位置",
+    "opacity": "透明度",
+    "fontSize": "字体大小",
+    "addWatermark": "添加水印"
+  },
+  "screenshot": {
+    "title": "截图美化",
+    "selectDevice": "选择设备",
+    "selectBackground": "选择背景",
+    "addShadow": "添加阴影",
+    "addReflection": "添加倒影",
+    "applyBeautify": "应用美化"
+  },
+  "join": {
+    "title": "图片拼接",
+    "layout": "布局",
+    "horizontal": "横向",
+    "vertical": "纵向",
+    "grid": "网格",
+    "columns": "列数",
+    "spacing": "间距",
+    "startJoin": "开始拼接"
+  },
+  "workflow": {
+    "title": "批量工作流",
+    "steps": "步骤",
+    "addStep": "添加步骤",
+    "runWorkflow": "运行工作流",
+    "clearWorkflow": "清空"
+  },
+  "help": {
+    "title": "帮助",
+    "version": "版本",
+    "quickStart": "快速开始",
+    "zoom": "缩放功能",
+    "zoomDesc": "使用 Ctrl + 鼠标滚轮 缩放界面。按 Ctrl + 0 重置缩放。",
+    "shortcuts": "快捷键",
+    "shortcut1": "Ctrl + 滚轮：缩放界面",
+    "shortcut2": "Ctrl + 0：重置缩放",
+    "supportedFormats": "支持的格式",
+    "formats": "JPEG, PNG, WebP, HEIC",
+    "tips": "使用技巧",
+    "tip1": "拖拽添加多张图片",
+    "tip2": "从剪贴板粘贴图片 (Ctrl + V)",
+    "tip3": "根据需要调整压缩质量"
+  },
+  "settings": {
+    "title": "设置",
+    "language": "语言",
+    "theme": "主题",
+    "light": "浅色",
+    "dark": "深色",
+    "about": "关于",
+    "version": "版本"
+  },
+  "dashboard": {
+    "welcome": "欢迎使用 ImageBox",
+    "description": "选择工具开始处理图片"
+  },
+  "features": {
+    "compress": {
+      "title": "图片压缩",
+      "desc": "减小文件体积，保持画质"
+    },
+    "watermark": {
+      "title": "添加水印",
+      "desc": "文字/图片水印，位置可调"
+    },
+    "convert": {
+      "title": "格式转换",
+      "desc": "HEIC/JPG/PNG/WebP 互转"
+    },
+    "resize": {
+      "title": "尺寸调整",
+      "desc": "等比缩放，预设尺寸"
+    },
+    "screenshot": {
+      "title": "截图美化",
+      "desc": "设备外壳，阴影背景"
+    },
+    "join": {
+      "title": "图片拼接",
+      "desc": "长图/九宫格，横向/纵向"
+    },
+    "workflow": {
+      "title": "批量工作流",
+      "desc": "自定义流程，一键导出"
+    }
+  }
+}

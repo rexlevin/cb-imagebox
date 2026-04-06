@@ -1,8 +1,8 @@
 <template>
     <div class="dashboard">
         <div class="welcome-section">
-            <h1 class="welcome-title">ImageBox</h1>
-            <p class="welcome-subtitle">选择工具开始处理图片</p>
+            <h1 class="welcome-title">{{ t('app.name') }}</h1>
+            <p class="welcome-subtitle">{{ t('dashboard.description') }}</p>
         </div>
 
         <div class="features-grid">
@@ -16,8 +16,8 @@
                 <div class="feature-content">
                     <div class="feature-icon">{{ feature.icon }}</div>
                     <div class="feature-info">
-                        <h3 class="feature-title">{{ feature.title }}</h3>
-                        <p class="feature-desc">{{ feature.desc }}</p>
+                        <h3 class="feature-title">{{ t(`features.${feature.id}.title`) }}</h3>
+                        <p class="feature-desc">{{ t(`features.${feature.id}.desc`) }}</p>
                     </div>
                 </div>
             </n-card>
@@ -26,60 +26,20 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
+const { t } = useI18n()
 const router = useRouter()
 
 const features = [
-    {
-        id: 'compress',
-        icon: '🗜️',
-        title: '图片压缩',
-        desc: '减小文件体积，保持画质',
-        path: '/compress'
-    },
-    {
-        id: 'watermark',
-        icon: '💧',
-        title: '添加水印',
-        desc: '文字/图片水印，位置可调',
-        path: '/watermark'
-    },
-    {
-        id: 'convert',
-        icon: '🔄',
-        title: '格式转换',
-        desc: 'HEIC/JPG/PNG/WebP 互转',
-        path: '/convert'
-    },
-    {
-        id: 'resize',
-        icon: '📐',
-        title: '尺寸调整',
-        desc: '等比缩放，预设尺寸',
-        path: '/resize'
-    },
-    {
-        id: 'screenshot',
-        icon: '📱',
-        title: '截图美化',
-        desc: '设备外壳，阴影背景',
-        path: '/screenshot'
-    },
-    {
-        id: 'join',
-        icon: '🧩',
-        title: '图片拼接',
-        desc: '长图/九宫格，横向/纵向',
-        path: '/join'
-    },
-    {
-        id: 'workflow',
-        icon: '⚡',
-        title: '批量工作流',
-        desc: '自定义流程，一键导出',
-        path: '/workflow'
-    }
+    { id: 'compress', icon: '🗜️', path: '/compress' },
+    { id: 'watermark', icon: '💧', path: '/watermark' },
+    { id: 'convert', icon: '🔄', path: '/convert' },
+    { id: 'resize', icon: '📐', path: '/resize' },
+    { id: 'screenshot', icon: '📱', path: '/screenshot' },
+    { id: 'join', icon: '🧩', path: '/join' },
+    { id: 'workflow', icon: '⚡', path: '/workflow' }
 ]
 
 const handleStart = (path) => {

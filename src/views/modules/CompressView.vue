@@ -1,11 +1,11 @@
 <template>
     <div class="compress-view">
-        <n-card class="settings-card" title="压缩设置">
+        <n-card class="settings-card" :title="t('compress.settingsTitle')">
             <div class="settings-grid">
                 <div class="setting-item">
-                    <label class="setting-label">目标格式</label>
+                    <label class="setting-label">{{ t('compress.targetFormat') }}</label>
                     <n-radio-group v-model:value="settings.format" size="small">
-                        <n-radio value="original">原格式</n-radio>
+                        <n-radio value="original">{{ t('compress.formatOriginal') }}</n-radio>
                         <n-radio value="jpeg">JPEG</n-radio>
                         <n-radio value="png">PNG</n-radio>
                         <n-radio value="webp">WebP</n-radio>
@@ -13,7 +13,7 @@
                 </div>
 
                 <div class="setting-item">
-                    <label class="setting-label">质量: {{ settings.quality }}%</label>
+                    <label class="setting-label">{{ t('compress.quality') }}: {{ settings.quality }}%</label>
                     <n-slider
                         v-model:value="settings.quality"
                         :min="10"
@@ -24,35 +24,35 @@
                 </div>
 
                 <div class="setting-item">
-                    <label class="setting-label">最大宽度</label>
+                    <label class="setting-label">{{ t('compress.maxWidth') }}</label>
                     <div class="input-with-suffix">
                         <n-input-number
                             v-model:value="settings.maxWidth"
                             :min="100"
                             :max="8000"
-                            placeholder="不限制"
+                            :placeholder="t('common.noLimit')"
                             :show-button="false"
                             size="small"
                             style="flex: 1"
                         />
-                        <span class="input-suffix">px</span>
+                        <span class="input-suffix">{{ t('common.px') }}</span>
                     </div>
                 </div>
 
                 <div class="setting-item">
                     <n-checkbox v-model:checked="settings.keepExif" size="small">
-                        保留 EXIF 信息
+                        {{ t('compress.keepExif') }}
                     </n-checkbox>
                 </div>
 
                 <div class="setting-item">
                     <n-checkbox v-model:checked="settings.pngQuantize" size="small">
-                        PNG 智能压缩（颜色量化）
+                        {{ t('compress.pngQuantize') }}
                     </n-checkbox>
                 </div>
 
                 <div class="setting-item" v-if="settings.pngQuantize">
-                    <label class="setting-label">颜色数: {{ settings.pngColors }}</label>
+                    <label class="setting-label">{{ t('compress.pngColors') }}: {{ settings.pngColors }}</label>
                     <n-slider
                         v-model:value="settings.pngColors"
                         :min="16"
@@ -64,13 +64,13 @@
 
                 <div class="setting-item">
                     <n-checkbox v-model:checked="settings.allowWebpFallback" size="small">
-                        PNG 允许转为 WebP（体积更小）
+                        {{ t('compress.webpFallback') }}
                     </n-checkbox>
                 </div>
             </div>
         </n-card>
 
-        <n-card class="files-card" :title="files.length > 0 ? `图片列表 (${files.length})` : ' '">
+        <n-card class="files-card" :title="files.length > 0 ? `${t('compress.imageList')} (${files.length})` : ' '">
             <template #header-extra>
                 <div class="header-actions">
                     <n-upload
@@ -84,20 +84,20 @@
                             <template #icon>
                                 <n-icon :size="14"><UploadIcon /></n-icon>
                             </template>
-                            添加图片
+                            {{ t('compress.addImages') }}
                         </n-button>
                     </n-upload>
                     <n-button size="small" @click="handlePaste" v-if="files.length === 0">
                         <template #icon>
                             <n-icon :size="14"><PasteIcon /></n-icon>
                         </template>
-                        粘贴
+                        {{ t('common.paste') }}
                     </n-button>
                     <n-button size="small" @click="handleClear" v-if="files.length > 0">
                         <template #icon>
                             <n-icon :size="14"><TrashIcon /></n-icon>
                         </template>
-                        清空
+                        {{ t('common.clear') }}
                     </n-button>
                 </div>
             </template>
@@ -113,8 +113,7 @@
                 <n-icon :size="48" class="empty-icon">
                     <ImageIcon />
                 </n-icon>
-                <div class="empty-text">拖拽图片到这里</div>
-                <div class="empty-hint">或使用上方按钮添加</div>
+                <div class="empty-text">{{ t('compress.dragOrPaste') }}</div>
             </div>
 
             <div v-else class="file-list">
@@ -132,24 +131,24 @@
                             <span>{{ formatSize(file.size) }}</span>
                             <span v-if="file.result">
                                 → {{ formatSize(file.result.size) }}
-                                <span v-if="file.result.isOriginal" class="file-original">原图</span>
-                                <span v-else-if="file.result.convertedToWebp" class="file-webp">转 WebP ↓ {{ calculateSaved(file) }}%</span>
+                                <span v-if="file.result.isOriginal" class="file-original">{{ t('compress.formatOriginal') }}</span>
+                                <span v-else-if="file.result.convertedToWebp" class="file-webp">WebP ↓ {{ calculateSaved(file) }}%</span>
                                 <span v-else class="file-saved">↓ {{ calculateSaved(file) }}%</span>
                             </span>
                         </div>
                     </div>
                     <div class="file-status">
                         <n-tag v-if="file.status === 'pending'" size="small" type="default">
-                            待处理
+                            {{ t('compress.pending') || 'Pending' }}
                         </n-tag>
                         <n-tag v-else-if="file.status === 'processing'" size="small" type="warning">
-                            处理中
+                            {{ t('compress.processing') || 'Processing' }}
                         </n-tag>
                         <n-tag v-else-if="file.status === 'done'" size="small" type="success">
-                            完成
+                            {{ t('common.success') }}
                         </n-tag>
                         <n-tag v-else-if="file.status === 'error'" size="small" type="error">
-                            失败
+                            {{ t('common.error') }}
                         </n-tag>
                     </div>
                     <n-button
@@ -168,20 +167,20 @@
             <template #footer v-if="files.length > 0">
                 <div class="footer-actions">
                     <n-button v-if="!showResult" type="primary" :loading="processing" block @click="handleCompress">
-                        开始压缩 ({{ files.length }})
+                        {{ t('compress.startCompress') }} ({{ files.length }})
                     </n-button>
 
                     <div v-if="showResult" class="result-summary">
                         <div class="result-stat">
-                            <span class="stat-label">原始:</span>
+                            <span class="stat-label">{{ t('compress.originalSize') }}:</span>
                             <span class="stat-value">{{ formatSize(totalOriginalSize) }}</span>
                         </div>
                         <div class="result-stat">
-                            <span class="stat-label">压缩后:</span>
+                            <span class="stat-label">{{ t('compress.compressedSize') }}:</span>
                             <span class="stat-value">{{ formatSize(totalCompressedSize) }}</span>
                         </div>
                         <div class="result-stat highlight">
-                            <span class="stat-label">节省:</span>
+                            <span class="stat-label">{{ t('compress.saved') }}:</span>
                             <span class="stat-value">{{ totalSaved }}%</span>
                         </div>
                         <div class="result-buttons">
@@ -189,19 +188,19 @@
                                 <template #icon>
                                     <n-icon :size="14"><DownloadIcon /></n-icon>
                                 </template>
-                                下载
+                                {{ t('common.download') }}
                             </n-button>
                             <n-button size="small" @click="continueAdd">
                                 <template #icon>
                                     <n-icon :size="14"><AddIcon /></n-icon>
                                 </template>
-                                继续
+                                {{ t('common.add') }}
                             </n-button>
                             <n-button size="small" @click="reset">
                                 <template #icon>
                                     <n-icon :size="14"><RenewIcon /></n-icon>
                                 </template>
-                                重置
+                                {{ t('common.reset') }}
                             </n-button>
                         </div>
                     </div>
@@ -217,8 +216,11 @@ defineOptions({
 })
 
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMessage } from 'naive-ui'
 import { Upload, Paste, Delete, Image, Download, Add, Renew, Close } from '@vicons/carbon'
+
+const { t } = useI18n()
 
 const UploadIcon = Upload
 const PasteIcon = Paste
@@ -300,13 +302,13 @@ const handlePaste = async () => {
                 const blob = await item.getType(imageTypes[0])
                 const file = new File([blob], `pasted_${Date.now()}.png`, { type: blob.type })
                 handleFileChange({ fileList: [{ name: file.name, file }] })
-                message.success('已从剪贴板粘贴')
+                message.success(t('common.paste') + ' OK')
                 return
             }
         }
-        message.warning('剪贴板中没有图片')
+        message.warning('No image in clipboard')
     } catch (err) {
-        message.error('无法读取剪贴板，请手动添加')
+        message.error('Cannot read clipboard')
     }
 }
 
@@ -324,7 +326,7 @@ const handleDrop = (e) => {
     const validFiles = droppedFiles.filter(f => f.type.startsWith('image/'))
     if (validFiles.length > 0) {
         handleFileChange({ fileList: validFiles.map(f => ({ name: f.name, file: f })) })
-        message.success(`已添加 ${validFiles.length} 张图片`)
+        message.success(`${validFiles.length} image(s) added`)
     }
 }
 
@@ -355,7 +357,7 @@ const handleClear = () => {
     if (uploadRef.value) {
         uploadRef.value.clear()
     }
-    message.info('已清空')
+    message.info(t('common.clear') + ' OK')
 }
 
 // PNG 颜色量化压缩 - 将图片转为 256 色或更少
@@ -524,7 +526,7 @@ const compressImage = async (file) => {
 
 const handleCompress = async () => {
     if (files.value.length === 0) {
-        message.warning('请先添加图片')
+        message.warning('Please add images first')
         return
     }
 
@@ -537,17 +539,17 @@ const handleCompress = async () => {
 
             const result = await compressImage(file.file)
             if (!result) {
-                throw new Error('压缩失败')
+                throw new Error('Compression failed')
             }
             file.result = result
             file.status = 'done'
         }
 
         showResult.value = true
-        message.success(`压缩完成！节省了 ${totalSaved.value}% 空间`)
+        message.success(`Compression completed! Saved ${totalSaved.value}%`)
     } catch (error) {
-        console.error('压缩失败:', error)
-        message.error('压缩失败，请重试')
+        console.error('Compression failed:', error)
+        message.error(t('compress.compressFailed'))
     } finally {
         processing.value = false
     }
@@ -564,12 +566,12 @@ const downloadAll = () => {
             document.body.removeChild(link)
         }
     })
-    message.success('下载已开始')
+    message.success('Download started')
 }
 
 const continueAdd = () => {
     showResult.value = false
-    message.info('请继续添加图片')
+    message.info('Continue adding images')
 }
 
 const reset = () => {
@@ -582,7 +584,7 @@ const reset = () => {
     if (uploadRef.value) {
         uploadRef.value.clear()
     }
-    message.info('已重置')
+    message.info('Reset completed')
 }
 </script>
 

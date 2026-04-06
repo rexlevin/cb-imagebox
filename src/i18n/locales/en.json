@@ -1,0 +1,174 @@
+{
+  "app": {
+    "name": "ImageBox",
+    "tagline": "Lightweight Image Processing Toolkit"
+  },
+  "nav": {
+    "home": "Home",
+    "compress": "Compress",
+    "convert": "Convert",
+    "resize": "Resize",
+    "watermark": "Watermark",
+    "screenshot": "Screenshot",
+    "join": "Join",
+    "workflow": "Workflow",
+    "help": "Help",
+    "settings": "Settings"
+  },
+  "common": {
+    "add": "Add",
+    "remove": "Remove",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "close": "Close",
+    "download": "Download",
+    "paste": "Paste",
+    "upload": "Upload",
+    "start": "Start",
+    "reset": "Reset",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info",
+    "px": "px",
+    "noLimit": "No limit"
+  },
+  "compress": {
+    "title": "Image Compression",
+    "settingsTitle": "Compression Settings",
+    "addImages": "Add Images",
+    "imageList": "Image List",
+    "originalSize": "Original",
+    "compressedSize": "Compressed",
+    "saved": "Saved",
+    "quality": "Quality",
+    "outputFormat": "Output Format",
+    "formatOriginal": "Original",
+    "startCompress": "Start Compression",
+    "compressing": "Compressing...",
+    "compressSuccess": "Compression completed!",
+    "compressFailed": "Compression failed",
+    "noImages": "No images added",
+    "dragOrPaste": "Drag images here or paste from clipboard",
+    "targetFormat": "Target Format",
+    "maxWidth": "Max Width",
+    "keepExif": "Keep EXIF",
+    "pngQuantize": "PNG Smart Compression",
+    "pngColors": "Colors",
+    "webpFallback": "Allow WebP fallback for PNG"
+  },
+  "convert": {
+    "title": "Format Conversion",
+    "selectFormat": "Select Format",
+    "sourceFormat": "Source Format",
+    "targetFormat": "Target Format",
+    "startConvert": "Start Conversion",
+    "converting": "Converting...",
+    "convertSuccess": "Conversion completed!",
+    "convertFailed": "Conversion failed"
+  },
+  "resize": {
+    "title": "Resize",
+    "width": "Width",
+    "height": "Height",
+    "keepRatio": "Keep Aspect Ratio",
+    "presets": "Presets",
+    "startResize": "Start Resize"
+  },
+  "watermark": {
+    "title": "Add Watermark",
+    "textWatermark": "Text Watermark",
+    "imageWatermark": "Image Watermark",
+    "watermarkText": "Watermark Text",
+    "position": "Position",
+    "opacity": "Opacity",
+    "fontSize": "Font Size",
+    "addWatermark": "Add Watermark"
+  },
+  "screenshot": {
+    "title": "Screenshot Beautify",
+    "selectDevice": "Select Device",
+    "selectBackground": "Select Background",
+    "addShadow": "Add Shadow",
+    "addReflection": "Add Reflection",
+    "applyBeautify": "Apply"
+  },
+  "join": {
+    "title": "Image Join",
+    "layout": "Layout",
+    "horizontal": "Horizontal",
+    "vertical": "Vertical",
+    "grid": "Grid",
+    "columns": "Columns",
+    "spacing": "Spacing",
+    "startJoin": "Start Join"
+  },
+  "workflow": {
+    "title": "Batch Workflow",
+    "steps": "Steps",
+    "addStep": "Add Step",
+    "runWorkflow": "Run Workflow",
+    "clearWorkflow": "Clear"
+  },
+  "help": {
+    "title": "Help",
+    "version": "Version",
+    "quickStart": "Quick Start",
+    "zoom": "Zoom",
+    "zoomDesc": "Use Ctrl + Mouse Wheel to zoom in/out. Press Ctrl + 0 to reset.",
+    "shortcuts": "Keyboard Shortcuts",
+    "shortcut1": "Ctrl + Wheel: Zoom in/out",
+    "shortcut2": "Ctrl + 0: Reset zoom",
+    "supportedFormats": "Supported Formats",
+    "formats": "JPEG, PNG, WebP, HEIC",
+    "tips": "Tips",
+    "tip1": "Drag and drop multiple images",
+    "tip2": "Paste images from clipboard (Ctrl + V)",
+    "tip3": "Adjust compression quality as needed"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "about": "About",
+    "version": "Version"
+  },
+  "dashboard": {
+    "welcome": "Welcome to ImageBox",
+    "description": "Select a tool to start processing images"
+  },
+  "features": {
+    "compress": {
+      "title": "Image Compression",
+      "desc": "Reduce file size while keeping quality"
+    },
+    "watermark": {
+      "title": "Add Watermark",
+      "desc": "Text/Image watermark with adjustable position"
+    },
+    "convert": {
+      "title": "Format Conversion",
+      "desc": "Convert between HEIC/JPG/PNG/WebP"
+    },
+    "resize": {
+      "title": "Resize",
+      "desc": "Scale proportionally or to preset sizes"
+    },
+    "screenshot": {
+      "title": "Screenshot Beautify",
+      "desc": "Device frames, shadows and backgrounds"
+    },
+    "join": {
+      "title": "Image Join",
+      "desc": "Long images, grids, horizontal/vertical"
+    },
+    "workflow": {
+      "title": "Batch Workflow",
+      "desc": "Custom workflows, one-click export"
+    }
+  }
+}

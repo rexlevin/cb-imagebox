@@ -10,7 +10,7 @@
         <n-layout class="main-layout">
             <n-layout-header class="header" bordered>
                 <div class="header-title">
-                    {{ currentTitle }}
+                    {{ t(currentTitle) }}
                 </div>
                 <div class="header-actions">
                     <n-tooltip trigger="hover" placement="bottom">
@@ -21,33 +21,33 @@
                                 </template>
                             </n-button>
                         </template>
-                        切换主题
+                        {{ t('settings.theme') }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" placement="bottom">
                         <template #trigger>
-                            <n-button text @click="showHelp" class="header-action-btn">
+                            <n-button text @click="router.push('/help')" class="header-action-btn">
                                 <template #icon>
                                     <n-icon :size="24" :component="HelpIcon" />
                                 </template>
                             </n-button>
                         </template>
-                        帮助
+                        {{ t('nav.help') }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" placement="bottom">
                         <template #trigger>
-                            <n-button text @click="showSettings" class="header-action-btn">
+                            <n-button text @click="router.push('/settings')" class="header-action-btn">
                                 <template #icon>
                                     <n-icon :size="24" :component="SettingsIcon" />
                                 </template>
                             </n-button>
                         </template>
-                        设置
+                        {{ t('nav.settings') }}
                     </n-tooltip>
                 </div>
             </n-layout-header>
             <n-layout-content class="content">
                 <router-view v-slot="{ Component }">
-                    <keep-alive :include="['Compress', 'Watermark', 'Convert', 'Resize', 'Screenshot', 'Join', 'Workflow']">
+                    <keep-alive :include="['Compress', 'Watermark', 'Convert', 'Resize', 'Screenshot', 'Join', 'Workflow', 'Settings', 'Help']">
                         <component :is="Component" />
                     </keep-alive>
                 </router-view>
@@ -59,6 +59,7 @@
 <script setup>
 import { computed, h, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useSettingsStore } from '@/stores/settings'
 import { useMessage, NIcon } from 'naive-ui'
 import {
@@ -74,6 +75,7 @@ import {
     Grid as JoinIcon
 } from '@vicons/carbon'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const settingsStore = useSettingsStore()
@@ -113,63 +115,71 @@ const currentRoute = computed({
 })
 
 const currentTitle = computed(() => {
-    return route.meta?.title || 'ImageBox'
+    return route.meta?.title || 'nav.home'
 })
 
 const menuOptions = computed(() => [
     {
-        label: '首页',
+        label: () => t('nav.home'),
         key: '/',
         icon: () => h('span', { class: 'menu-icon' }, '🏠')
     },
     {
-        label: '图片压缩',
+        label: () => t('nav.compress'),
         key: '/compress',
         icon: () => h('span', { class: 'menu-icon' }, '🗜️')
     },
     {
-        label: '添加水印',
-        key: '/watermark',
-        icon: () => h('span', { class: 'menu-icon' }, '💧')
-    },
-    {
-        label: '格式转换',
+        label: () => t('nav.convert'),
         key: '/convert',
         icon: () => h('span', { class: 'menu-icon' }, '🔄')
     },
     {
-        label: '尺寸调整',
+        label: () => t('nav.resize'),
         key: '/resize',
         icon: () => h('span', { class: 'menu-icon' }, '📐')
     },
     {
-        label: '截图美化',
+        label: () => t('nav.watermark'),
+        key: '/watermark',
+        icon: () => h('span', { class: 'menu-icon' }, '💧')
+    },
+    {
+        label: () => t('nav.screenshot'),
         key: '/screenshot',
         icon: () => h('span', { class: 'menu-icon' }, '📱')
     },
     {
-        label: '图片拼接',
+        label: () => t('nav.join'),
         key: '/join',
         icon: () => h('span', { class: 'menu-icon' }, '🧩')
     },
     {
-        label: '批量工作流',
+        label: () => t('nav.workflow'),
         key: '/workflow',
         icon: () => h('span', { class: 'menu-icon' }, '⚡')
+    },
+    {
+        type: 'divider',
+        key: 'divider'
+    },
+    {
+        label: () => t('nav.help'),
+        key: '/help',
+        icon: () => h('span', { class: 'menu-icon' }, '❓')
+    },
+    {
+        label: () => t('nav.settings'),
+        key: '/settings',
+        icon: () => h('span', { class: 'menu-icon' }, '⚙️')
     }
 ])
 
 const toggleTheme = () => {
     settingsStore.toggleTheme()
-    message.success(`已切换到${settingsStore.theme === 'dark' ? '浅色' : '深色'}主题`)
-}
-
-const showHelp = () => {
-    message.info('帮助文档正在开发中...')
-}
-
-const showSettings = () => {
-    message.info('设置面板正在开发中...')
+    const themeName = settingsStore.theme === 'dark' ? t('settings.dark') : t('settings.light')
+    message.success(`${t('settings.theme')}: ${themeName}`)
+    document.documentElement.setAttribute('data-theme', settingsStore.theme)
 }
 </script>
 
