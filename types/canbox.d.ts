@@ -4,9 +4,17 @@ declare global {
     interface Window {
         canbox: {
             /**
-             * 钩子对象，用于存储全局状态
+             * 钩子对象，用于存储全局状态和回调函数
              */
-            hooks: Record<string, any>;
+            hooks: {
+                /**
+                 * 语言变化回调函数
+                 * 当 Canbox 语言切换时调用，传入新的语言代码
+                 * @param locale - 新的语言代码，如 'zh-CN' 或 'en-US'
+                 */
+                onLocaleChange: ((locale: string) => void) | null;
+                [key: string]: any;
+            };
 
             /**
              * 示例方法
@@ -205,6 +213,12 @@ declare global {
                  */
                 clear: (name: string) => Promise<void>;
             };
+
+            /**
+             * 获取 Canbox 当前语言
+             * @returns 语言代码，如 'zh-CN' 或 'en-US'
+             */
+            getLocale: () => string;
 
             /**
              * 注册窗口关闭时的回调函数

@@ -1,7 +1,7 @@
 {
     "name": "cb-imagebox",
     "private": true,
-    "version": "0.0.3",
+    "version": "0.0.4",
     "scripts": {
         "dev": "vite --port 5173",
         "build": "vite build",
