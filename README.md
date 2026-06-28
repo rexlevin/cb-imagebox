@@ -71,7 +71,7 @@ ImageBox is built on top of [Canbox](https://rexlevin.github.io/canbox-pages/) -
 
 ## Screenshots
 
-![Main Interface](./docs/screenshots/main-en.png)
+![Main Interface](./public/screenshots/main-en.png)
 
 ## Roadmap
 

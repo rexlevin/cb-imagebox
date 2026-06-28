@@ -71,7 +71,7 @@ ImageBox 构建于 [Canbox](https://rexlevin.github.io/canbox-pages/) 之上 - �
 
 ## 界面预览
 
-![主界面](./docs/screenshots/main-zh.png)
+![主界面](./public/screenshots/main-zh.png)
 
 ## 开发计划
 
