@@ -249,7 +249,7 @@
   "settings": {
     "title": "设置",
     "language": "语言",
-    "followSystemLocale": "跟随 Canbox 主程序语言",
+
     "theme": "主题",
     "light": "浅色",
     "dark": "深色",

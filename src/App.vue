@@ -16,7 +16,7 @@ import { darkTheme, lightTheme } from 'naive-ui'
 import AppLayout from './components/layout/AppLayout.vue'
 import ClipboardBar from './components/common/ClipboardBar.vue'
 import { useSettingsStore } from './stores/settings'
-import { initI18n, setLanguage, syncLanguage, isLocaleSupported } from './i18n'
+import { initI18n } from './i18n'
 
 const hasClipboardImage = ref(false)
 const settingsStore = useSettingsStore()
@@ -43,31 +43,7 @@ watch(() => settingsStore.theme, (newTheme) => {
 onMounted(async () => {
     document.documentElement.setAttribute('data-theme', settingsStore.theme)
     await settingsStore.initSettings()
-
-    // 如果开启了跟随系统语言，先同步到系统语言
-    if (settingsStore.followSystemLocale && window.followSystemAPI) {
-        const canboxLocale = window.followSystemAPI.getLocale()
-        if (canboxLocale && isLocaleSupported(canboxLocale)) {
-            settingsStore.language = canboxLocale
-            syncLanguage(canboxLocale)
-        } else {
-            initI18n(settingsStore.language)
-        }
-    } else {
-        initI18n(settingsStore.language)
-    }
-
-    // 注册 Canbox 语言变化监听
-    if (window.followSystemAPI) {
-        window.followSystemAPI.onLocaleChange((newLocale) => {
-            if (settingsStore.followSystemLocale && newLocale) {
-                if (isLocaleSupported(newLocale)) {
-                    settingsStore.language = newLocale
-                    syncLanguage(newLocale)
-                }
-            }
-        })
-    }
+    initI18n(settingsStore.language)
 })
 </script>
 
@@ -84,4 +60,3 @@ onMounted(async () => {
     flex-direction: column;
 }
 </style>
-

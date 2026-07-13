@@ -1,16 +1,21 @@
 {
     "name": "cb-imagebox",
+    "id": "com.github.rexlevin.imagebox",
     "private": true,
-    "version": "0.0.4",
+    "version": "0.0.5",
+    "description": "ImageBox - 图片工具箱",
+    "author": "rexlevin",
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/rexlevin/cb-imagebox",
+    "main": "main.js",
+    "logo": "logo.png",
+    "keywords": ["image", "image-processing", "compress", "watermark", "convert", "screenshot"],
     "scripts": {
         "dev": "vite --port 5173",
         "build": "vite build",
-        "preview": "vite preview"
-    },
-    "devDependencies": {
-        "@vitejs/plugin-vue": "^6.0.7",
-        "typescript": "^5.9.3",
-        "vite": "^7.3.5"
+        "preview": "vite preview",
+        "dist": "electron-builder --linux dir",
+        "start": "NODE_ENV=development electron -r /depot/cargo/canbox-core/injection.js . --app-id=cb-imagebox --no-sandbox"
     },
     "dependencies": {
         "@vicons/carbon": "^0.13.0",
@@ -23,5 +28,28 @@
         "vue": "^3.5.31",
         "vue-i18n": "^9.14.0",
         "vue-router": "^4.6.4"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^6.0.7",
+        "electron": "^41.2.1",
+        "electron-builder": "^26.0.12",
+        "typescript": "^5.9.3",
+        "vite": "^7.3.5"
+    },
+    "build": {
+        "appId": "com.github.rexlevin.imagebox",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "main.js",
+            "preload.js",
+            "build/**/*",
+            "package.json",
+            "logo.png"
+        ],
+        "linux": {
+            "target": ["dir"]
+        }
     }
 }

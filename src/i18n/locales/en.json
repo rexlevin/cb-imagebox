@@ -249,7 +249,7 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "followSystemLocale": "Follow Canbox Language",
+
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark",

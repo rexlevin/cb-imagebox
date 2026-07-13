@@ -39,14 +39,4 @@ export const getCurrentLanguage = () => {
   return i18n.global.locale.value
 }
 
-// 同步语言到指定值（用于跟随系统语言时）
-export const syncLanguage = (lang) => {
-  if (isLocaleSupported(lang)) {
-    i18n.global.locale.value = lang
-    console.log('语言同步到:', lang)
-  } else {
-    console.warn('不支持的语言:', lang)
-  }
-}
-
 export default i18n

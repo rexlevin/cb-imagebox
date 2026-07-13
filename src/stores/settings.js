@@ -9,39 +9,16 @@ export const useSettingsStore = defineStore('settings', () => {
   const keepExif = ref(true)
   const language = ref('en')
   const theme = ref('light')
-  const followSystemLocale = ref(false)
-
-  // 获取当前实际使用的语言（考虑是否跟随系统）
-  const getActualLanguage = () => {
-    if (followSystemLocale.value && window.followSystemAPI) {
-      const canboxLocale = window.followSystemAPI.getLocale()
-      if (canboxLocale && ['en', 'zh-CN'].includes(canboxLocale)) {
-        return canboxLocale
-      }
-    }
-    return language.value
-  }
 
   // 初始化设置（异步加载）
   const initSettings = async () => {
     try {
-      // 加载语言设置
       const savedLanguage = await window.languageAPI?.getLanguage()
       if (savedLanguage && ['en', 'zh-CN'].includes(savedLanguage)) {
         language.value = savedLanguage
       }
     } catch (e) {
       console.warn('Failed to load language from languageAPI:', e)
-    }
-
-    try {
-      // 加载是否跟随系统语言设置
-      const savedFollowSystem = await window.followSystemAPI?.getFollowSystem()
-      if (typeof savedFollowSystem === 'boolean') {
-        followSystemLocale.value = savedFollowSystem
-      }
-    } catch (e) {
-      console.warn('Failed to load followSystemLocale:', e)
     }
   }
 
@@ -54,16 +31,7 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
-  // 保存是否跟随系统语言
-  const saveFollowSystem = async () => {
-    try {
-      await window.followSystemAPI?.saveFollowSystem(followSystemLocale.value)
-    } catch (e) {
-      console.warn('Failed to save followSystemLocale:', e)
-    }
-  }
-
-  // 设置语言（考虑是否跟随系统）
+  // 设置语言
   const setLanguage = (lang) => {
     if (['en', 'zh-CN'].includes(lang)) {
       language.value = lang
@@ -71,29 +39,9 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
-  // 设置是否跟随系统语言
-  const setFollowSystemLocale = (follow) => {
-    followSystemLocale.value = follow
-    saveFollowSystem()
-  }
-
-  // 监听语言变化，自动保存（非跟随模式时）
+  // 监听语言变化，自动保存
   watch(language, () => {
-    if (!followSystemLocale.value) {
-      saveLanguage()
-    }
-  })
-
-  // 监听跟随设置变化，保存并同步语言
-  watch(followSystemLocale, (newVal, oldVal) => {
-    saveFollowSystem()
-    if (newVal) {
-      // 开启跟随模式，同步到系统语言
-      const canboxLocale = window.followSystemAPI?.getLocale()
-      if (canboxLocale && ['en', 'zh-CN'].includes(canboxLocale)) {
-        language.value = canboxLocale
-      }
-    }
+    saveLanguage()
   })
 
   function updateSettings(settings) {
@@ -104,7 +52,6 @@ export const useSettingsStore = defineStore('settings', () => {
     if (settings.keepExif !== undefined) keepExif.value = settings.keepExif
     if (settings.language !== undefined) language.value = settings.language
     if (settings.theme !== undefined) theme.value = settings.theme
-    if (settings.followSystemLocale !== undefined) followSystemLocale.value = settings.followSystemLocale
   }
 
   function resetSettings() {
@@ -114,7 +61,6 @@ export const useSettingsStore = defineStore('settings', () => {
     deviceFrame.value = 'iphone-15-pro'
     keepExif.value = true
     language.value = 'en'
-    followSystemLocale.value = false
   }
 
   function toggleTheme() {
@@ -129,10 +75,7 @@ export const useSettingsStore = defineStore('settings', () => {
     keepExif,
     language,
     theme,
-    followSystemLocale,
-    getActualLanguage,
     setLanguage,
-    setFollowSystemLocale,
     updateSettings,
     resetSettings,
     toggleTheme,
