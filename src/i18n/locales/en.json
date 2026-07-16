@@ -84,6 +84,7 @@
     "targetFormat": "Target Format",
     "keepTransparency": "Keep Transparency",
     "transparencyHint": "PNG/WebP only",
+    "keepExif": "Keep EXIF",
     "jpegQuality": "JPEG Quality",
     "startConvert": "Start Conversion",
     "converting": "Converting...",

@@ -84,6 +84,7 @@
     "targetFormat": "目标格式",
     "keepTransparency": "保留透明通道",
     "transparencyHint": "仅 PNG/WebP",
+    "keepExif": "保留 EXIF 信息",
     "jpegQuality": "JPEG 质量",
     "startConvert": "开始转换",
     "converting": "转换中...",

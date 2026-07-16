@@ -9,7 +9,14 @@
     "homepage": "https://github.com/rexlevin/cb-imagebox",
     "main": "main.js",
     "logo": "logo.png",
-    "keywords": ["image", "image-processing", "compress", "watermark", "convert", "screenshot"],
+    "keywords": [
+        "image",
+        "image-processing",
+        "compress",
+        "watermark",
+        "convert",
+        "screenshot"
+    ],
     "scripts": {
         "dev": "vite --port 5173",
         "build": "vite build",
@@ -49,7 +56,9 @@
             "logo.png"
         ],
         "linux": {
-            "target": ["dir"]
+            "target": [
+                "dir"
+            ]
         }
     }
 }
