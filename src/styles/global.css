@@ -175,3 +175,20 @@ body {
 [data-theme="dark"] * {
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
+
+/* 禁用页面文本选中与复制（桌面应用 UI 交互风格） */
+body,
+body * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+/* 可编辑控件内部仍允许选中/复制，保证输入与编辑正常 */
+body input,
+body textarea,
+body [contenteditable='true'] {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    user-select: text;
+}

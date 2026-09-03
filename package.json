@@ -22,7 +22,7 @@
         "build": "vite build",
         "preview": "vite preview",
         "dist": "electron-builder --linux dir",
-        "start": "NODE_ENV=development electron -r /depot/cargo/canbox-core/injection.js . --app-id=cb-imagebox --no-sandbox"
+        "start": "cross-env NODE_ENV=development electron -r ../canbox-core/injection.js . --app-id=cb-imagebox --no-sandbox"
     },
     "dependencies": {
         "@vicons/carbon": "^0.13.0",
@@ -38,6 +38,7 @@
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^6.0.7",
+        "cross-env": "^10.1.0",
         "electron": "42.5.1",
         "electron-builder": "^26.0.12",
         "typescript": "^5.9.3",
