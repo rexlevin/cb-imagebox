@@ -1,5 +1,6 @@
 {
     "name": "cb-imagebox",
+    "displayName": "ImageBox",
     "id": "com.github.rexlevin.imagebox",
     "private": true,
     "version": "0.0.6",
